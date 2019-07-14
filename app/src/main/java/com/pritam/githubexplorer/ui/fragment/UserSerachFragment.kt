@@ -1,11 +1,9 @@
 package com.pritam.githubexplorer.ui.fragment
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,27 +20,30 @@ import com.pritam.githubexplorer.retrofit.rest.ApiInterface
 import com.pritam.githubexplorer.ui.adapter.RecyclerTouchListener
 import com.pritam.githubexplorer.ui.adapter.UserSerachListAdapter
 import com.pritam.githubexplorer.utils.ConnectivityUtils
-import kotlinx.android.synthetic.main.fragment_user_search.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.TextView
 import android.widget.EditText
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.pritam.githubexplorer.ui.adapter.EndlessRecyclerOnScrollListener
 
 class UserSerachFragment : Fragment() {
 
     private val TAG = UsesDetailsFragment::class.java.simpleName
     private lateinit var rootView: View
     private var aList: ArrayList<Item> = ArrayList()
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    private lateinit var recyclerView: RecyclerView
     private var textSearch = "";
+    private var pageno = 1;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         arguments?.let {
-            textSearch = it.getString("username", "android")
+            textSearch = it.getString("username", "")
         }
     }
 
@@ -63,7 +64,8 @@ class UserSerachFragment : Fragment() {
             if(actionId == EditorInfo.IME_ACTION_DONE){
                 if(edSearch.text != null){
                     hideKeyboard()
-                    fetchdata( edSearch.text.toString(), 1)
+                    textSearch = edSearch.text.toString()
+                    fetchdata(context)
                 } else {
                     Snackbar.make(rootView, R.string.enterusername, Snackbar.LENGTH_LONG).show();
                 }
@@ -75,7 +77,7 @@ class UserSerachFragment : Fragment() {
 
 
         //Bind the recyclerview
-        val recyclerView = rootView.findViewById(R.id.recyclerView) as RecyclerView
+        recyclerView = rootView.findViewById(R.id.recyclerView) as RecyclerView
 
         //Add a LayoutManager
         recyclerView.layoutManager = LinearLayoutManager(context, LinearLayout.VERTICAL, false)
@@ -95,43 +97,80 @@ class UserSerachFragment : Fragment() {
                 })
         )
 
-        if (ConnectivityUtils.isNetworkAvailable(context)) {
-            // network is present so will load updated data
-            fetchdata("android", 1)
-        } else {
-            // network is not present then show message
-            Snackbar.make(rootView, R.string.network_error, Snackbar.LENGTH_LONG).show();
+        recyclerView.addOnScrollListener(object : EndlessRecyclerOnScrollListener() {
+                override fun onLoadMore() {
+                    pageno = pageno + 1
+                    fetchdata(context)
+                }
+        })
+
+        swipeRefreshLayout = rootView.findViewById(R.id.swipe_refresh_layout) as SwipeRefreshLayout
+        swipeRefreshLayout.setColorSchemeResources(
+            R.color.blue,
+            R.color.green,
+            R.color.orange,
+            R.color.red
+        )
+        swipeRefreshLayout.setOnRefreshListener{
+            pageno = 1;
+            fetchdata(context)
         }
+        fetchdata(context)
+
         return rootView
     }
 
-    private fun fetchdata(uname: String, pageno: Int) {
-        val apiService = ApiClient.client!!.create(ApiInterface::class.java)
-
-        val call = apiService.getUserSearch(uname, pageno)
-        call.enqueue(object : Callback<UserSerachResponse> {
-            override fun onResponse(call: Call<UserSerachResponse>, response: Response<UserSerachResponse>) {
-                val aObj: UserSerachResponse? = response.body()
-                Log.d(TAG, "Response " + aObj.toString())
-                if (aObj != null) {
-                    if (aObj.total_count > 0) {
-                        aList = aObj.items as ArrayList<Item>
-                        //creating adapter and item adding to adapter of recyclerview
-                        recyclerView.adapter = UserSerachListAdapter(aList);
-                        (recyclerView.adapter as UserSerachListAdapter).notifyDataSetChanged();
+    private fun fetchdata(context: Context) {
+        if(textSearch.isNullOrEmpty()){
+            textSearch = "android"
+        }
+        Log.d(TAG, pageno.toString())
+        if (ConnectivityUtils.isNetworkAvailable(context)) {
+            // Show swipe to refresh icon animation
+            swipeRefreshLayout.isRefreshing = true
+            // network is present so will load updated data
+            val apiService = ApiClient.client!!.create(ApiInterface::class.java)
+            val call = apiService.getUserSearch(textSearch, pageno)
+            call.enqueue(object : Callback<UserSerachResponse> {
+                override fun onResponse(call: Call<UserSerachResponse>, response: Response<UserSerachResponse>) {
+                    // Hide swipe to refresh icon animation
+                    swipeRefreshLayout.isRefreshing = false
+                    val aObj: UserSerachResponse? = response.body()
+                    Log.d(TAG, "Response " + aObj.toString())
+                    if (aObj != null) {
+                        if (aObj.total_count > 0) {
+                            var alList = aObj.items as ArrayList<Item>
+                            //creating adapter and item adding to adapter of recyclerview
+                            if(pageno == 1){
+                                aList = alList;
+                                recyclerView.adapter = UserSerachListAdapter(aList);
+                            } else {
+                                aList.addAll(alList);
+                            }
+                            Log.d(TAG, aList.size.toString())
+                            if (aList.size > 0)
+                                (recyclerView.adapter as UserSerachListAdapter).notifyDataSetChanged();
+                        } else {
+                            Snackbar.make(rootView, R.string.nouser, Snackbar.LENGTH_LONG).show();
+                        }
                     } else {
-                        Snackbar.make(rootView, R.string.nouser, Snackbar.LENGTH_LONG).show();
+                        Snackbar.make(rootView, R.string.error, Snackbar.LENGTH_LONG).show();
                     }
-                } else {
-                    Snackbar.make(rootView, R.string.error, Snackbar.LENGTH_LONG).show();
                 }
-            }
 
-            override fun onFailure(call: Call<UserSerachResponse>, t: Throwable) {
-                // Log error here since request failed
-                Log.e(TAG, t.toString())
-            }
-        })
+                override fun onFailure(call: Call<UserSerachResponse>, t: Throwable) {
+                    // Log error here since request failed
+                    Log.e(TAG, t.toString())
+                    swipeRefreshLayout.isRefreshing = false
+                }
+            })
+        } else {
+            // network is not present then show message
+            Snackbar.make(rootView, R.string.network_error, Snackbar.LENGTH_LONG)
+                .setAction("Retry", View.OnClickListener {
+                    fetchdata(context)
+                }).show();
+        }
     }
 
 

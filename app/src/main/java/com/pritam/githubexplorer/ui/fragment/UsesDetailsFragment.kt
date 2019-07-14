@@ -16,14 +16,16 @@ import com.pritam.githubexplorer.retrofit.model.UserDetailsResponse
 import com.pritam.githubexplorer.retrofit.rest.ApiClient
 import com.pritam.githubexplorer.retrofit.rest.ApiInterface
 import com.pritam.githubexplorer.utils.ConnectivityUtils
+import com.pritam.githubexplorer.utils.Constants
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_user_details.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.regex.Pattern
 
 
-open class UsesDetailsFragment : Fragment() { //, View.OnClickListener
+open class UsesDetailsFragment : Fragment() {
 
 
     private val TAG = UsesDetailsFragment::class.java.simpleName
@@ -59,13 +61,7 @@ open class UsesDetailsFragment : Fragment() { //, View.OnClickListener
             openCustomTabs(tv_blog.text.toString())
         }
 
-        if (ConnectivityUtils.isNetworkAvailable(context)) {
-            // network is present so will load updated data
-            fetchdata(username)
-        } else {
-            // network is not present then show message
-            Snackbar.make(rootView!!, R.string.network_error, Snackbar.LENGTH_LONG).show();
-        }
+        fetchdata(context)
 
         return rootView
     }
@@ -86,22 +82,26 @@ open class UsesDetailsFragment : Fragment() { //, View.OnClickListener
         }
     }
 
-    private fun fetchdata(uname: String) {
+    private fun fetchdata(context: Context) {
+        if (ConnectivityUtils.isNetworkAvailable(context)) {
+            // network is present so will load updated data
         val apiService = ApiClient.client!!.create(ApiInterface::class.java)
 
-        val call = apiService.getUserDetails(uname)
+        val call = apiService.getUserDetails(username)
         call.enqueue(object : Callback<UserDetailsResponse> {
             override fun onResponse(call: Call<UserDetailsResponse>, response: Response<UserDetailsResponse>) {
                 val aObj: UserDetailsResponse? = response.body()
                 Log.d(TAG, "Response " + aObj.toString())
                 if (aObj != null) {
-                    tv_name.text = aObj.name;
-                    tv_bio.text = aObj.bio;
-                    tv_location.text = aObj.location;
-                    tv_blog.text = aObj.blog;
 
+                    setTextView(tv_name, aObj.name)
+                    setTextView(tv_bio, aObj.bio)
+                    setTextView(tv_location, aObj.location)
+                    setTextView(tv_blog, aObj.blog)
                     if (null != aObj.email) {
-                        tv_email.text = aObj.email.toString();
+                        setTextView(tv_email, aObj.email.toString())
+                    } else {
+                        setTextView(tv_email, "")
                     }
 
                     if (aObj.avatar_url != "") {
@@ -111,12 +111,12 @@ open class UsesDetailsFragment : Fragment() { //, View.OnClickListener
                             .into(im_avatar)
                     }
 
-                    tv_public_repos.text = aObj.public_repos.toString();
-                    tv_public_gists.text = aObj.public_gists.toString();
-                    tv_followers.text = aObj.followers.toString();
-                    tv_following.text = aObj.following.toString();
-                    tv_created_at.text = aObj.created_at;
-                    tv_updated_at.text = aObj.updated_at;
+                    setTextView(tv_public_repos, aObj.public_repos.toString())
+                    setTextView(tv_public_gists, aObj.public_gists.toString())
+                    setTextView(tv_followers, aObj.followers.toString())
+                    setTextView(tv_following, aObj.following.toString())
+                    setTextView(tv_created_at, aObj.created_at)
+                    setTextView(tv_updated_at, aObj.updated_at)
 
                 } else {
                     Snackbar.make(rootView!!, R.string.error, Snackbar.LENGTH_LONG).show();
@@ -127,22 +127,49 @@ open class UsesDetailsFragment : Fragment() { //, View.OnClickListener
                 // Log error here since request failed
                 Log.e(TAG, t.toString())
             }
-        })
+        })} else {
+            // network is not present then show message
+            Snackbar.make(rootView, R.string.network_error, Snackbar.LENGTH_LONG)
+                .setAction("Retry", View.OnClickListener {
+                    fetchdata(context)
+                }).show();
+        }
+    }
+
+    private fun setTextView(tvView: TextView, name: String) {
+        if (name.isNullOrEmpty()) {
+            tvView.visibility = View.GONE
+        } else {
+            tvView.visibility = View.VISIBLE
+            tvView.text = name;
+        }
     }
 
     private fun openCustomTabs(url: String) {
-        val builder = CustomTabsIntent.Builder()
-        val customTabsIntent = builder.build()
-        customTabsIntent.launchUrl(getContext(), Uri.parse(url))
+        if(url != null && url.length > 6 && url.contains("http")){
+            val builder = CustomTabsIntent.Builder()
+            val customTabsIntent = builder.build()
+            customTabsIntent.launchUrl(getContext(), Uri.parse(url))
+        }
     }
 
     private fun sendEmail() {
-        val intent = Intent(Intent.ACTION_SEND)
-        intent.type = "text/html"
-        intent.putExtra(Intent.EXTRA_EMAIL, tv_email.text.toString())
-        intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name))
-        intent.putExtra(Intent.EXTRA_TEXT, "Hi " + username + ",\n\n, Thanks & Regards,\n\n")
-        startActivity(Intent.createChooser(intent, "Send Email"))
+        if(username != null && username.length > 6 && isEmailValid(username)) {
+            val intent = Intent(Intent.ACTION_SEND)
+            intent.type = "text/html"
+            intent.putExtra(Intent.EXTRA_EMAIL, tv_email.text.toString())
+            intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name))
+            intent.putExtra(Intent.EXTRA_TEXT, "Hi " + username + ",\n\nThanks & Regards,\n\n")
+            startActivity(Intent.createChooser(intent, "Send Email!"))
+        }
+    }
+
+    fun isEmailValid(email: String): Boolean {
+        val EMAIL_REGEX = Pattern.compile(
+            Constants.EMAIL_VERIFICATION,
+            Pattern.CASE_INSENSITIVE
+        )
+        return EMAIL_REGEX.matcher(email).matches()
     }
 
 
