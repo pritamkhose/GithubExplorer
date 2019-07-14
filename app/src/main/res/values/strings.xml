@@ -1,4 +1,16 @@
 <resources>
     <string name="app_name">GithubExplorer</string>
     <string name="action_settings">Settings</string>
+    <string name="action_exit">Exit</string>
+
+    <string name="title_activity_splash_screen">SplashScreenActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">Github\nExplorer</string>
+
+    <string name="network_error">Network is not Available</string>
+    <string name="error">Something went wrong!</string>
+    <string name="nouser">No User Found</string>
+    <string name="action_share">Share</string>
+    <string name="giturl">https://github.com/</string>
+    <string name="enterusername">Enter valid text for Search</string>
 </resources>
