@@ -39,6 +39,7 @@ dependencies {
     // Retrofit
     implementation "com.squareup.retrofit2:retrofit:$rootProject.retrofit2Version"
     implementation "com.squareup.retrofit2:converter-gson:$rootProject.retrofit2Version"
+    implementation "com.squareup.okhttp3:logging-interceptor:$rootProject.okhttp3logging"
 
     // Picasso
     implementation "com.squareup.picasso:picasso:$rootProject.picassoVersion"

@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.pritam.githubexplorer.R
 import com.pritam.githubexplorer.extensions.addFragment
 import com.pritam.githubexplorer.ui.fragment.UserSerachFragment
-import com.pritam.githubexplorer.ui.fragment.UsesDetailsFragment
 import kotlinx.android.synthetic.main.activity_main.*
 
 

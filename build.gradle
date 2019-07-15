@@ -40,10 +40,11 @@ ext {
     material =  '1.0.0'
     recyclerview = '1.1.0-beta01'
 //  lifeCycleVersion = '1.1.1'
-    gsonVersion = '2.8.2'
+    gsonVersion = '2.8.5'
     picassoVersion = '2.71828'
     customtabs =  '28.0.0'
     retrofit2Version = '2.4.0'
+    okhttp3logging = '3.4.1'
 
     //Test dependencies
     junitVersion = '4.12'
