@@ -49,7 +49,7 @@ class UserFollowerFragment : Fragment() {
         rootView = inflater.inflate(R.layout.fragment_follow, container, false);
 
         val context = activity as Context
-        getActivity()?.setTitle(username + " Followers");
+        getActivity()?.setTitle(username.toUpperCase() + " Followers");
 
         //Bind the recyclerview
         recyclerViewFollower = rootView.findViewById(R.id.recyclerViewFollow) as RecyclerView

@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.annotation.Nullable
 import androidx.browser.customtabs.CustomTabsIntent
@@ -58,7 +59,7 @@ open class UsersDetailsFragment : Fragment() {
         rootView = inflater.inflate(R.layout.fragment_user_details, container, false);
 
         val context = activity as Context
-        getActivity()?.setTitle(username);
+        getActivity()?.setTitle(username.toUpperCase());
 
         val tvemail: (TextView) = rootView.findViewById(R.id.tv_email)
         tvemail.setOnClickListener {
@@ -139,11 +140,19 @@ open class UsersDetailsFragment : Fragment() {
                             setTextView(tv_name, aObj.name)
                             setTextView(tv_bio, aObj.bio)
                             setTextView(tv_location, aObj.location)
-                            setTextView(tv_blog, aObj.blog)
+                            setTextView(tv_public_repos, aObj.public_repos.toString())
+                            setTextView(tv_public_gists, aObj.public_gists.toString())
+                            setTextView(tv_followers, aObj.followers.toString())
+                            setTextView(tv_following, aObj.following.toString())
+
+
+                            setTextImageView(ln_blog, tv_blog, aObj.blog)
+                            setTextImageView(ln_created_at, tv_created_at, getString(R.string.joinedAt) + stringtoDateFormat(aObj.created_at))
+                            setTextImageView(ln_updated_at, tv_updated_at, getString(R.string.updatedAt) + stringtoDateFormat(aObj.updated_at))
                             if (null != aObj.email) {
-                                setTextView(tv_email, aObj.email.toString())
+                                setTextImageView(ln_email, tv_email, aObj.email.toString())
                             } else {
-                                setTextView(tv_email, "")
+                                setTextImageView(ln_email, tv_email, "")
                             }
 
                             if (aObj.avatar_url != "") {
@@ -152,13 +161,6 @@ open class UsersDetailsFragment : Fragment() {
                                     .placeholder(R.mipmap.no_image_placeholder)
                                     .into(im_avatar)
                             }
-
-                            setTextView(tv_public_repos, aObj.public_repos.toString())
-                            setTextView(tv_public_gists, aObj.public_gists.toString())
-                            setTextView(tv_followers, aObj.followers.toString())
-                            setTextView(tv_following, aObj.following.toString())
-                            setTextView(tv_created_at, getString(R.string.joinedAt) + stringtoDateFormat(aObj.created_at))
-                            setTextView(tv_updated_at, getString(R.string.updatedAt) + stringtoDateFormat(aObj.updated_at))
                         } catch (e: Exception){
                             e.printStackTrace()
                         }
@@ -187,6 +189,15 @@ open class UsersDetailsFragment : Fragment() {
             tvView.visibility = View.GONE
         } else {
             tvView.visibility = View.VISIBLE
+            tvView.text = name;
+        }
+    }
+
+    private fun setTextImageView(lv: LinearLayout, tvView: TextView, name: String) {
+        if (name.isNullOrEmpty()) {
+            lv.visibility = View.GONE
+        } else {
+            lv.visibility = View.VISIBLE
             tvView.text = name;
         }
     }

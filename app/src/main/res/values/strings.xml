@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">GithubExplorer</string>
+    <string name="app_name">Github Explorer</string>
     <string name="action_settings">Settings</string>
     <string name="action_exit">Exit</string>
 
@@ -13,6 +13,6 @@
     <string name="action_share">Share</string>
     <string name="giturl">https://github.com/</string>
     <string name="enterusername">Enter valid text for Search</string>
-    <string name="joinedAt">Joined at : </string>
-    <string name="updatedAt">Last updated at : </string>
+    <string name="joinedAt">Joined at :\u0020</string>
+    <string name="updatedAt">Last updated at :\u0020</string>
 </resources>

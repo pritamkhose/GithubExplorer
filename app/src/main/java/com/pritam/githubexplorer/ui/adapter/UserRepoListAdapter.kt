@@ -39,13 +39,22 @@ class UserRepoListAdapter(val userList: ArrayList<UserReposResponse>) : Recycler
             val tvname = itemView.findViewById(R.id.tv_name) as TextView
             tvname.text = item.name
             val tvdesp = itemView.findViewById(R.id.tv_description) as TextView
-            tvdesp.text = item.description
+            setTextView(tvdesp ,item.description)
             val tvlang = itemView.findViewById(R.id.tv_language) as TextView
-            tvlang.text = item.language
+            setTextView(tvlang ,item.language)
             val tvfork = itemView.findViewById(R.id.tv_forks_count) as TextView
             tvfork.text = item.forks_count.toString()
             val tvstr = itemView.findViewById(R.id.tv_stargazers_count) as TextView
             tvstr.text = item.stargazers_count.toString()
+        }
+
+        private fun setTextView(tvView: TextView, name: String) {
+            if (name.isNullOrEmpty()) {
+                tvView.visibility = View.GONE
+            } else {
+                tvView.visibility = View.VISIBLE
+                tvView.text = name;
+            }
         }
     }
 

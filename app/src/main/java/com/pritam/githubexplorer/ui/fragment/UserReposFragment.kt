@@ -54,7 +54,7 @@ open class UserReposFragment : Fragment() {
         rootView = inflater.inflate(R.layout.fragment_user_repos, container, false)
 
         val context = activity as Context
-        getActivity()?.setTitle(username + " Repositories");
+        getActivity()?.setTitle(username.toUpperCase() + " Repositories");
 
         //Bind the recyclerview
         recyclerView = rootView.findViewById(R.id.recyclerView) as RecyclerView

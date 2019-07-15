@@ -25,7 +25,7 @@
                     android:textColor="@android:color/holo_blue_dark"
                     android:textSize="22sp"
                     android:textStyle="bold"
-                    android:layout_marginBottom="5dp"
+                    android:layout_margin="5dp"
                     android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"/>
 
             <TextView
@@ -34,6 +34,8 @@
                     android:layout_height="wrap_content"
                     android:textColor="@android:color/black"
                     android:textSize="18sp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="5dp"
                     android:layout_marginBottom="5dp"/>
 
             <LinearLayout
@@ -53,11 +55,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="18sp"
-                        android:layout_marginLeft="5dp"
+                        android:layout_marginLeft="10dp"
                         android:layout_marginRight="5dp"
                         android:text=""
                         android:textColor="@android:color/holo_blue_dark"
-                        android:layout_weight="0.75"/>
+                        android:layout_weight="1"/>
 
                 <LinearLayout
                         android:layout_weight="0.25"
@@ -78,7 +80,7 @@
 
                     <TextView
                             android:id="@+id/tv_stargazers_count"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textColor="@android:color/black"
                             android:textSize="20sp"
@@ -86,6 +88,13 @@
                             android:layout_marginRight="5dp"
                             android:text="0"
                             android:layout_marginBottom="5dp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                        android:layout_weight="0.25"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
 
                     <ImageView
                             android:layout_width="20dp"
@@ -100,7 +109,7 @@
 
                     <TextView
                             android:id="@+id/tv_forks_count"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textColor="@android:color/black"
                             android:textSize="20sp"

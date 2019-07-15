@@ -133,6 +133,7 @@ class UserSerachFragment : Fragment() {
             pageno = 1;
             fetchdata(context)
         }
+        pageno = 1;
         fetchdata(context)
 
         return rootViewSearch
@@ -165,9 +166,6 @@ class UserSerachFragment : Fragment() {
                                     recyclerView.adapter = UserSerachListAdapter(aList);
                                 } else {
                                     aList.addAll(alList);
-                                }
-                                Log.d(TAG, aList.size.toString())
-                                if (aList != null && aList.size > 0){
                                     (recyclerView.adapter as UserSerachListAdapter).notifyDataSetChanged();
                                 }
                             } else {
@@ -175,7 +173,7 @@ class UserSerachFragment : Fragment() {
                             }
                         } catch ( e: Exception){
                             e.printStackTrace()
-                            Snackbar.make(activity?.getCurrentFocus()!!, R.string.error, Snackbar.LENGTH_LONG).show();
+                            Snackbar.make(rootViewSearch, R.string.error, Snackbar.LENGTH_LONG).show();
                         }
                     } else {
                         Snackbar.make(rootViewSearch, R.string.error, Snackbar.LENGTH_LONG).show();
