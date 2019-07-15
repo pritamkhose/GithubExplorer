@@ -26,13 +26,16 @@ import retrofit2.Response
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.ImageView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.pritam.githubexplorer.ui.adapter.EndlessRecyclerOnScrollListener
+import kotlinx.android.synthetic.main.fragment_user_search.*
+import java.lang.Exception
 
 class UserSerachFragment : Fragment() {
 
     private val TAG = UsersDetailsFragment::class.java.simpleName
-    private lateinit var rootView: View
+    private lateinit var rootViewSearch: View
     private var aList: ArrayList<Item> = ArrayList()
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var recyclerView: RecyclerView
@@ -53,14 +56,13 @@ class UserSerachFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        rootView = inflater.inflate(R.layout.fragment_user_search, container, false)
+        rootViewSearch = inflater.inflate(R.layout.fragment_user_search, container, false)
 
         val context = activity as Context
         getActivity()?.setTitle(R.string.app_name);
 
-
-        // Search box
-        val edSearch: (EditText) = rootView.findViewById(R.id.textSearch)
+        // Search enter text
+        val edSearch: (EditText) = rootViewSearch.findViewById(R.id.textSearch)
         edSearch.setOnEditorActionListener { v, actionId, _event ->
             if(actionId == EditorInfo.IME_ACTION_DONE){
                 if(edSearch.text != null){
@@ -68,7 +70,7 @@ class UserSerachFragment : Fragment() {
                     textSearchStr = edSearch.text.toString()
                     fetchdata(context)
                 } else {
-                    Snackbar.make(rootView, R.string.enterusername, Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(rootViewSearch, R.string.enterusername, Snackbar.LENGTH_LONG).show();
                 }
                 true
             } else {
@@ -78,9 +80,22 @@ class UserSerachFragment : Fragment() {
         if(textSearchStr != null && textSearchStr.length > 0){
             edSearch.setText(textSearchStr)
         }
+        // Search box
+        // get reference to ImageView
+        val im_search = rootViewSearch.findViewById(R.id.im_search) as ImageView
+        im_search.setOnClickListener {
+            // your code to perform when the user clicks on the ImageView
+            if(edSearch.text != null){
+                hideKeyboard()
+                textSearchStr = edSearch.text.toString()
+                fetchdata(context)
+            } else {
+                Snackbar.make(rootViewSearch, R.string.enterusername, Snackbar.LENGTH_LONG).show();
+            }
+        }
 
         //Bind the recyclerview
-        recyclerView = rootView.findViewById(R.id.recyclerView) as RecyclerView
+        recyclerView = rootViewSearch.findViewById(R.id.recyclerView) as RecyclerView
 
         //Add a LayoutManager
         recyclerView.layoutManager = LinearLayoutManager(context, LinearLayout.VERTICAL, false)
@@ -107,7 +122,7 @@ class UserSerachFragment : Fragment() {
                 }
         })
 
-        swipeRefreshLayout = rootView.findViewById(R.id.swipe_refresh_layout) as SwipeRefreshLayout
+        swipeRefreshLayout = rootViewSearch.findViewById(R.id.swipe_refresh_layout) as SwipeRefreshLayout
         swipeRefreshLayout.setColorSchemeResources(
             R.color.blue,
             R.color.green,
@@ -120,7 +135,7 @@ class UserSerachFragment : Fragment() {
         }
         fetchdata(context)
 
-        return rootView
+        return rootViewSearch
     }
 
     private fun fetchdata(context: Context) {
@@ -141,23 +156,29 @@ class UserSerachFragment : Fragment() {
                     val aObj: UserSerachResponse? = response.body()
                     // Log.d(TAG, "Response " + aObj.toString())
                     if (aObj != null) {
-                        if (aObj.total_count > 0) {
-                            var alList = aObj.items as ArrayList<Item>
-                            //creating adapter and item adding to adapter of recyclerview
-                            if(pageno == 1){
-                                aList = alList;
-                                recyclerView.adapter = UserSerachListAdapter(aList);
+                        try{
+                            if (aObj.total_count > 0) {
+                                var alList = aObj.items as ArrayList<Item>
+                                //creating adapter and item adding to adapter of recyclerview
+                                if(pageno == 1){
+                                    aList = alList;
+                                    recyclerView.adapter = UserSerachListAdapter(aList);
+                                } else {
+                                    aList.addAll(alList);
+                                }
+                                Log.d(TAG, aList.size.toString())
+                                if (aList != null && aList.size > 0){
+                                    (recyclerView.adapter as UserSerachListAdapter).notifyDataSetChanged();
+                                }
                             } else {
-                                aList.addAll(alList);
+                                Snackbar.make(rootViewSearch, R.string.nouser, Snackbar.LENGTH_LONG).show();
                             }
-                            Log.d(TAG, aList.size.toString())
-                            if (aList != null && aList.size > 0)
-                                (recyclerView.adapter as UserSerachListAdapter).notifyDataSetChanged();
-                        } else {
-                            Snackbar.make(rootView, R.string.nouser, Snackbar.LENGTH_LONG).show();
+                        } catch ( e: Exception){
+                            e.printStackTrace()
+                            Snackbar.make(activity?.getCurrentFocus()!!, R.string.error, Snackbar.LENGTH_LONG).show();
                         }
                     } else {
-                        Snackbar.make(rootView, R.string.error, Snackbar.LENGTH_LONG).show();
+                        Snackbar.make(rootViewSearch, R.string.error, Snackbar.LENGTH_LONG).show();
                     }
                 }
 
@@ -169,7 +190,7 @@ class UserSerachFragment : Fragment() {
             })
         } else {
             // network is not present then show message
-            Snackbar.make(rootView, R.string.network_error, Snackbar.LENGTH_LONG)
+            Snackbar.make(rootViewSearch, R.string.network_error, Snackbar.LENGTH_LONG)
                 .setAction("Retry", View.OnClickListener {
                     fetchdata(context)
                 }).show();
@@ -190,6 +211,6 @@ class UserSerachFragment : Fragment() {
 
     private fun hideKeyboard() {
         val imm = getActivity()?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(rootView.windowToken, 0)
+        imm.hideSoftInputFromWindow(rootViewSearch.windowToken, 0)
     }
 }
