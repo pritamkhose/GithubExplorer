@@ -13,4 +13,6 @@
     <string name="action_share">Share</string>
     <string name="giturl">https://github.com/</string>
     <string name="enterusername">Enter valid text for Search</string>
+    <string name="joinedAt">Joined at : </string>
+    <string name="updatedAt">Last updated at : </string>
 </resources>

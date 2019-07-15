@@ -31,19 +31,20 @@ import com.pritam.githubexplorer.ui.adapter.EndlessRecyclerOnScrollListener
 
 class UserSerachFragment : Fragment() {
 
-    private val TAG = UsesDetailsFragment::class.java.simpleName
+    private val TAG = UsersDetailsFragment::class.java.simpleName
     private lateinit var rootView: View
     private var aList: ArrayList<Item> = ArrayList()
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var recyclerView: RecyclerView
-    private var textSearch = "";
+    private var textSearchStr = "";
     private var pageno = 1;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         arguments?.let {
-            textSearch = it.getString("username", "")
+            textSearchStr = it.getString("username", "")
+
         }
     }
 
@@ -64,7 +65,7 @@ class UserSerachFragment : Fragment() {
             if(actionId == EditorInfo.IME_ACTION_DONE){
                 if(edSearch.text != null){
                     hideKeyboard()
-                    textSearch = edSearch.text.toString()
+                    textSearchStr = edSearch.text.toString()
                     fetchdata(context)
                 } else {
                     Snackbar.make(rootView, R.string.enterusername, Snackbar.LENGTH_LONG).show();
@@ -74,7 +75,9 @@ class UserSerachFragment : Fragment() {
                 false
             }
         }
-
+        if(textSearchStr != null && textSearchStr.length > 0){
+            edSearch.setText(textSearchStr)
+        }
 
         //Bind the recyclerview
         recyclerView = rootView.findViewById(R.id.recyclerView) as RecyclerView
@@ -88,7 +91,7 @@ class UserSerachFragment : Fragment() {
                 recyclerView,
                 object : RecyclerTouchListener.ClickListener {
                     override fun onClick(view: View, position: Int) {
-                        swapFragment(aList[position].login)
+                        openFragment(aList[position].login)
                     }
 
                     override fun onLongClick(view: View?, position: Int) {
@@ -121,8 +124,8 @@ class UserSerachFragment : Fragment() {
     }
 
     private fun fetchdata(context: Context) {
-        if(textSearch.isNullOrEmpty()){
-            textSearch = "android"
+        if(textSearchStr.isNullOrEmpty()){
+            textSearchStr = "android"
         }
         Log.d(TAG, pageno.toString())
         if (ConnectivityUtils.isNetworkAvailable(context)) {
@@ -130,13 +133,13 @@ class UserSerachFragment : Fragment() {
             swipeRefreshLayout.isRefreshing = true
             // network is present so will load updated data
             val apiService = ApiClient.client!!.create(ApiInterface::class.java)
-            val call = apiService.getUserSearch(textSearch, pageno)
+            val call = apiService.getUserSearch(textSearchStr, pageno)
             call.enqueue(object : Callback<UserSerachResponse> {
                 override fun onResponse(call: Call<UserSerachResponse>, response: Response<UserSerachResponse>) {
                     // Hide swipe to refresh icon animation
                     swipeRefreshLayout.isRefreshing = false
                     val aObj: UserSerachResponse? = response.body()
-                    Log.d(TAG, "Response " + aObj.toString())
+                    // Log.d(TAG, "Response " + aObj.toString())
                     if (aObj != null) {
                         if (aObj.total_count > 0) {
                             var alList = aObj.items as ArrayList<Item>
@@ -148,7 +151,7 @@ class UserSerachFragment : Fragment() {
                                 aList.addAll(alList);
                             }
                             Log.d(TAG, aList.size.toString())
-                            if (aList.size > 0)
+                            if (aList != null && aList.size > 0)
                                 (recyclerView.adapter as UserSerachListAdapter).notifyDataSetChanged();
                         } else {
                             Snackbar.make(rootView, R.string.nouser, Snackbar.LENGTH_LONG).show();
@@ -174,8 +177,8 @@ class UserSerachFragment : Fragment() {
     }
 
 
-    private fun swapFragment(username: String) {
-        val userDetailFragment = UsesDetailsFragment()
+    private fun openFragment(username: String) {
+        val userDetailFragment = UsersDetailsFragment()
         val args = Bundle()
         args.putString("username", username)
         userDetailFragment.setArguments(args)
