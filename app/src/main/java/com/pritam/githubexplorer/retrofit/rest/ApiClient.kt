@@ -13,7 +13,7 @@ object ApiClient {
 
     val client: Retrofit?
         get() {
-            if (retrofit == null) {
+            if (retrofit === null) {
 
                 val interceptor = HttpLoggingInterceptor()
                 interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
