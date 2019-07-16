@@ -48,7 +48,8 @@ dependencies {
     implementation "com.android.support:customtabs:$rootProject.customtabs"
 
     // Testing
-    testImplementation "junit:junit:$rootProject.junitVersion"
+    testImplementation "androidx.test.ext:junit:$rootProject.junitVersion"
     androidTestImplementation "androidx.test:runner:$rootProject.runnerVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$rootProject.espressoCore"
+    androidTestImplementation "com.android.support.test:rules:$rootProject.testrules"
 }
