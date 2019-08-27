@@ -36,7 +36,7 @@ class UserFollowListAdapter(val userList: List<UserFollowResponse>) : RecyclerVi
             val textViewName = itemView.findViewById(R.id.textViewUsername) as TextView
             val im_avatar = itemView.findViewById(R.id.im_avatar) as ImageView
             textViewName.text = item.login
-            if (item.avatar_url != "") {
+            if (item.avatar_url !== "") {
                 Picasso.get()
                     .load(item.avatar_url)
                     .placeholder(R.mipmap.no_image_placeholder)

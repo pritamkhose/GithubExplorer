@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.pritam.githubexplorer.R
+import com.pritam.githubexplorer.extensions.replaceFragment
 import com.pritam.githubexplorer.retrofit.model.UserFollowResponse
 import com.pritam.githubexplorer.retrofit.rest.ApiClient
 import com.pritam.githubexplorer.retrofit.rest.ApiInterface
@@ -109,14 +110,11 @@ class UserFollowingFragment : Fragment() {
     }
 
     private fun openUserSerachFragment(username: String) {
-        val userDetailFragment = UsersDetailsFragment()
+        val fragment = UsersDetailsFragment()
         val args = Bundle()
         args.putString("username", username)
-        userDetailFragment.setArguments(args)
-        val fragmentTransaction = fragmentManager!!.beginTransaction()
-        fragmentTransaction.replace(R.id.fragment_container, userDetailFragment)
-        fragmentTransaction.addToBackStack(null)
-        fragmentTransaction.commit()
+        fragment.setArguments(args)
+        replaceFragment(fragment, R.id.fragment_container)
     }
 
 }

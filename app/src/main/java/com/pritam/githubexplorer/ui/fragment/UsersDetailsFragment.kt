@@ -16,6 +16,7 @@ import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
 import com.pritam.githubexplorer.R
+import com.pritam.githubexplorer.extensions.replaceFragment
 import com.pritam.githubexplorer.retrofit.model.UserDetailsResponse
 import com.pritam.githubexplorer.retrofit.rest.ApiClient
 import com.pritam.githubexplorer.retrofit.rest.ApiInterface
@@ -73,21 +74,21 @@ open class UsersDetailsFragment : Fragment() {
 
         val cardViewFollower: (CardView) = rootView.findViewById(R.id.cardViewFollower)
         cardViewFollower.setOnClickListener {
-            if(userObj != null && userObj.followers != null && userObj.followers > 0 ){
+            if(userObj !== null && userObj.followers !== null && userObj.followers > 0 ){
                 openFragment(UserFollowerFragment())
             }
         }
 
         val cardViewFollowing: (CardView) = rootView.findViewById(R.id.cardViewFollowing)
         cardViewFollowing.setOnClickListener {
-            if(userObj != null && userObj.following != null && userObj.following > 0 ){
+            if(userObj !== null && userObj.following !== null && userObj.following > 0 ){
                 openFragment(UserFollowingFragment())
             }
         }
 
         val cardViewRepo: (CardView) = rootView.findViewById(R.id.cardViewRepo)
         cardViewRepo.setOnClickListener {
-            if(userObj != null && userObj.public_repos != null && userObj.public_repos > 0 ){
+            if(userObj !== null && userObj.public_repos !== null && userObj.public_repos > 0 ){
                 openFragment(UserReposFragment())
             }
         }
@@ -121,7 +122,7 @@ open class UsersDetailsFragment : Fragment() {
             call.enqueue(object : Callback<UserDetailsResponse> {
                 override fun onResponse(call: Call<UserDetailsResponse>, response: Response<UserDetailsResponse>) {
                     val aObj: UserDetailsResponse? = response.body()
-                    if (aObj != null) {
+                    if (aObj !== null) {
                         try{
                             userObj = aObj
                             val tv_name = rootView.findViewById(R.id.tv_name) as TextView
@@ -149,13 +150,13 @@ open class UsersDetailsFragment : Fragment() {
                             setTextImageView(ln_blog, tv_blog, aObj.blog)
                             setTextImageView(ln_created_at, tv_created_at, getString(R.string.joinedAt) + stringtoDateFormat(aObj.created_at))
                             setTextImageView(ln_updated_at, tv_updated_at, getString(R.string.updatedAt) + stringtoDateFormat(aObj.updated_at))
-                            if (null != aObj.email) {
+                            if (null !== aObj.email) {
                                 setTextImageView(ln_email, tv_email, aObj.email.toString())
                             } else {
                                 setTextImageView(ln_email, tv_email, "")
                             }
 
-                            if (aObj.avatar_url != "") {
+                            if (aObj.avatar_url !== "") {
                                 Picasso.get()
                                     .load(aObj.avatar_url)
                                     .placeholder(R.mipmap.no_image_placeholder)
@@ -203,7 +204,7 @@ open class UsersDetailsFragment : Fragment() {
     }
 
     private fun openCustomTabs(url: String) {
-        if (url != null && url.length > 6 && url.contains("http")) {
+        if (url !== null && url.length > 6 && url.contains("http")) {
             val builder = CustomTabsIntent.Builder()
             val customTabsIntent = builder.build()
             customTabsIntent.launchUrl(getContext(), Uri.parse(url))
@@ -211,7 +212,7 @@ open class UsersDetailsFragment : Fragment() {
     }
 
     private fun sendEmail() {
-        if (username != null && username.length > 6 && isEmailValid(username)) {
+        if (username !== null && username.length > 6 && isEmailValid(username)) {
             val intent = Intent(Intent.ACTION_SEND)
             intent.type = "text/html"
             intent.putExtra(Intent.EXTRA_EMAIL, tv_email.text.toString())
@@ -239,13 +240,10 @@ open class UsersDetailsFragment : Fragment() {
     }
 
     private fun openFragment(fragment: Fragment) {
-            val args = Bundle()
-            args.putString("username", username)
-            fragment.setArguments(args)
-            val fragmentTransaction = fragmentManager!!.beginTransaction()
-            fragmentTransaction.replace(R.id.fragment_container, fragment)
-            fragmentTransaction.addToBackStack(null)
-            fragmentTransaction.commit()
+        val args = Bundle()
+        args.putString("username", username)
+        fragment.setArguments(args)
+        replaceFragment(fragment, R.id.fragment_container)
     }
 
     fun stringtoDateFormat(dates: String): String {

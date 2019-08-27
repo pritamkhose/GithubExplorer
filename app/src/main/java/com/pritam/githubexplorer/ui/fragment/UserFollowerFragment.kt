@@ -23,6 +23,7 @@ import com.pritam.githubexplorer.utils.ConnectivityUtils
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import com.pritam.githubexplorer.extensions.replaceFragment
 
 class UserFollowerFragment : Fragment() {
 
@@ -108,14 +109,11 @@ class UserFollowerFragment : Fragment() {
 
 
     private fun openUserSerachFragment(username: String) {
-        val userDetailFragment = UsersDetailsFragment()
+        val fragment = UsersDetailsFragment()
         val args = Bundle()
         args.putString("username", username)
-        userDetailFragment.setArguments(args)
-        val fragmentTransaction = fragmentManager!!.beginTransaction()
-        fragmentTransaction.replace(R.id.fragment_container, userDetailFragment)
-        fragmentTransaction.addToBackStack(null)
-        fragmentTransaction.commit()
+        fragment.setArguments(args)
+        replaceFragment(fragment, R.id.fragment_container)
     }
 
 }

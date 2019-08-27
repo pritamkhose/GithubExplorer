@@ -139,7 +139,7 @@ open class UserReposFragment : Fragment() {
                     // Hide swipe to refresh icon animation
                     swipeRefreshLayout.isRefreshing = false
                     val alList: ArrayList<UserReposResponse>? = response.body()
-                    if (alList != null && alList.size > 0) {
+                    if (alList !== null && alList.size > 0) {
                         //creating adapter and item adding to adapter of recyclerview
                             if(pageno == 1){
                                 aList = alList;
@@ -147,7 +147,7 @@ open class UserReposFragment : Fragment() {
                             } else {
                                 aList.addAll(alList);
                             }
-                        if (aList != null && aList.size > 0)
+                        if (aList !== null && aList.size > 0)
                             (recyclerView.adapter as UserRepoListAdapter).notifyDataSetChanged();
                     } else {
                         Snackbar.make(rootView, R.string.nouser, Snackbar.LENGTH_LONG).show();
@@ -170,7 +170,7 @@ open class UserReposFragment : Fragment() {
     }
 
     private fun openCustomTabs(url: String) {
-        if (url != null && url.length > 6 && url.contains("http")) {
+        if (url !== null && url.length > 6 && url.contains("http")) {
             val builder = CustomTabsIntent.Builder()
             val customTabsIntent = builder.build()
             customTabsIntent.launchUrl(getContext(), Uri.parse(url))
