@@ -8,7 +8,7 @@ buildscript {
         
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.4.0'
+        classpath 'com.android.tools.build:gradle:3.5.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -27,32 +27,3 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
-// Define versions in a single place
-ext {
-    // Sdk and tools
-    minSdkVersion = 15
-    targetSdkVersion = 28
-    compileSdkVersion = 28
-
-    // App dependencies
-    supportLibraryVersion = '1.0.2'
-    constraintlayout = '1.1.3'
-    material =  '1.0.0'
-    recyclerview = '1.1.0-beta01'
-//  lifeCycleVersion = '1.1.1'
-    gsonVersion = '2.8.5'
-    picassoVersion = '2.71828'
-    customtabs =  '28.0.0'
-    retrofit2Version = '2.4.0'
-    okhttp3logging = '3.4.1'
-    dagger_version= "2.24"
-
-    //Test dependencies
-    junitVersion = '1.1.0'
-    espressoCore = '3.2.0'
-    runnerVersion = '1.0.2'
-    testrules = '1.0.2'
-//  mockitoCoreVersion = '2.18.3'
-//  mockitoVersion = '2.13.0'
-
-}
