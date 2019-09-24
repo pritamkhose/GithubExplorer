@@ -16,7 +16,7 @@ object ApiClient {
             if (retrofit === null) {
 
                 val interceptor = HttpLoggingInterceptor()
-                interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
+                interceptor.level = HttpLoggingInterceptor.Level.BODY
                 val client = OkHttpClient.Builder()
                     .addInterceptor(interceptor)
                     .connectTimeout(Constants.CONNECTION_TIMEOUT, TimeUnit.SECONDS)
@@ -35,3 +35,4 @@ object ApiClient {
             return retrofit
         }
 }
+

@@ -18,15 +18,15 @@ class UserSerachListAdapter(val userList: ArrayList<Item>) : RecyclerView.Adapte
     lateinit var mContext: Context
 
     //this method is returning the view for each item in the list
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserSerachListAdapter.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.list_item_user_serach, parent, false)
         mContext = parent.context
         return ViewHolder(v)
     }
 
     //this method is binding the data on the list
-    override fun onBindViewHolder(holder: UserSerachListAdapter.ViewHolder, position: Int) {
-        holder.bindItems(userList[position], mContext)
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.bindItems(userList[position])
     }
 
     //this method is giving the size of the list
@@ -38,7 +38,7 @@ class UserSerachListAdapter(val userList: ArrayList<Item>) : RecyclerView.Adapte
     //the class is holding the list view
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        fun bindItems(item: Item, mContext: Context) {
+        fun bindItems(item: Item) {
             val textViewName = itemView.findViewById(R.id.textViewUsername) as TextView
             val im_avatar = itemView.findViewById(R.id.im_avatar) as ImageView
             textViewName.text = item.login

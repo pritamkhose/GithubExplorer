@@ -29,7 +29,8 @@ interface ApiInterface {
     fun getUserRepos(
         @Path("username") username: String,
         @Query("sort") sort: String,
-        @Query("per_page") per_page: Int
+        @Query("per_page") per_page: Int,
+        @Query("page") page: Int
     ): Call<ArrayList<UserReposResponse>>
 
     // https://api.github.com/users/pritamkhose/followers

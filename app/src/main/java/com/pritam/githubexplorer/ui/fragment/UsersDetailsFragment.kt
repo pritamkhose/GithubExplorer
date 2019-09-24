@@ -60,7 +60,7 @@ open class UsersDetailsFragment : Fragment() {
         rootView = inflater.inflate(R.layout.fragment_user_details, container, false);
 
         val context = activity as Context
-        getActivity()?.setTitle(username.toUpperCase());
+        activity?.setTitle(username.toUpperCase());
 
         val tvemail: (TextView) = rootView.findViewById(R.id.tv_email)
         tvemail.setOnClickListener {
@@ -74,21 +74,21 @@ open class UsersDetailsFragment : Fragment() {
 
         val cardViewFollower: (CardView) = rootView.findViewById(R.id.cardViewFollower)
         cardViewFollower.setOnClickListener {
-            if(userObj !== null && userObj.followers !== null && userObj.followers > 0 ){
+            if(userObj.followers > 0 ){
                 openFragment(UserFollowerFragment())
             }
         }
 
         val cardViewFollowing: (CardView) = rootView.findViewById(R.id.cardViewFollowing)
         cardViewFollowing.setOnClickListener {
-            if(userObj !== null && userObj.following !== null && userObj.following > 0 ){
+            if(userObj.following > 0 ){
                 openFragment(UserFollowingFragment())
             }
         }
 
         val cardViewRepo: (CardView) = rootView.findViewById(R.id.cardViewRepo)
         cardViewRepo.setOnClickListener {
-            if(userObj !== null && userObj.public_repos !== null && userObj.public_repos > 0 ){
+            if(userObj.public_repos > 0 ){
                 openFragment(UserReposFragment())
             }
         }
@@ -150,7 +150,7 @@ open class UsersDetailsFragment : Fragment() {
                             setTextImageView(ln_blog, tv_blog, aObj.blog)
                             setTextImageView(ln_created_at, tv_created_at, getString(R.string.joinedAt) + stringtoDateFormat(aObj.created_at))
                             setTextImageView(ln_updated_at, tv_updated_at, getString(R.string.updatedAt) + stringtoDateFormat(aObj.updated_at))
-                            if (null !== aObj.email) {
+                            if (aObj.email != null) {
                                 setTextImageView(ln_email, tv_email, aObj.email.toString())
                             } else {
                                 setTextImageView(ln_email, tv_email, "")
@@ -204,7 +204,7 @@ open class UsersDetailsFragment : Fragment() {
     }
 
     private fun openCustomTabs(url: String) {
-        if (url !== null && url.length > 6 && url.contains("http")) {
+        if (url.length > 6 && url.contains("http")) {
             val builder = CustomTabsIntent.Builder()
             val customTabsIntent = builder.build()
             customTabsIntent.launchUrl(getContext(), Uri.parse(url))
@@ -212,10 +212,11 @@ open class UsersDetailsFragment : Fragment() {
     }
 
     private fun sendEmail() {
-        if (username !== null && username.length > 6 && isEmailValid(username)) {
+        var email = tv_email.text.toString();
+        if (email.length > 6 && isEmailValid(email)) {
             val intent = Intent(Intent.ACTION_SEND)
             intent.type = "text/html"
-            intent.putExtra(Intent.EXTRA_EMAIL, tv_email.text.toString())
+            intent.putExtra(Intent.EXTRA_EMAIL, email)
             intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name))
             intent.putExtra(Intent.EXTRA_TEXT, "Hi " + username + ",\n\nThanks & Regards,\n\n")
             startActivity(Intent.createChooser(intent, "Send Email!"))
@@ -250,9 +251,8 @@ open class UsersDetailsFragment : Fragment() {
         val DATE_FORMAT_PATTERN  = "yyyy-MM-dd'T'HH:mm:ss'Z'"; //2019-07-14T06:56:42Z
         val sdf = SimpleDateFormat("dd MMM yyyy",Locale.ENGLISH)
         var dateStr= dates
-        var date: Date? = null
+        var date: Date
         try {
-            //date =
             date = SimpleDateFormat(DATE_FORMAT_PATTERN).parse(dates);
             dateStr =  sdf.format(date).toString()
             // println(date)

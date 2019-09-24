@@ -9,7 +9,7 @@
 
     <string name="network_error">Network is not Available</string>
     <string name="error">Something went wrong!</string>
-    <string name="nouser">No User Found</string>
+    <string name="nouser">No more result Found</string>
     <string name="action_share">Share</string>
     <string name="giturl">https://github.com/</string>
     <string name="enterusername">Enter valid text for Search</string>

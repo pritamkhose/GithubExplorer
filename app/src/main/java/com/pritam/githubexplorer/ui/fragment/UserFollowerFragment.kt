@@ -29,7 +29,7 @@ class UserFollowerFragment : Fragment() {
 
     private val TAG = UserFollowerFragment::class.java.simpleName
     private lateinit var rootView: View
-    private var username = "";
+    private var username = ""
     private val apiService = ApiClient.client!!.create(ApiInterface::class.java)
     private lateinit var recyclerViewFollower: RecyclerView
     private var aListFollow: List<UserFollowResponse> = ArrayList()
@@ -47,10 +47,10 @@ class UserFollowerFragment : Fragment() {
         @Nullable savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        rootView = inflater.inflate(R.layout.fragment_follow, container, false);
+        rootView = inflater.inflate(R.layout.fragment_follow, container, false)
 
         val context = activity as Context
-        getActivity()?.setTitle(username.toUpperCase() + " Followers");
+        activity?.title = username.toUpperCase() + " Followers"
 
         //Bind the recyclerview
         recyclerViewFollower = rootView.findViewById(R.id.recyclerViewFollow) as RecyclerView
@@ -88,9 +88,9 @@ class UserFollowerFragment : Fragment() {
                     var aList: List<UserFollowResponse>? = response.body()
                     if (aList != null && aList.size > 0) {
                         aListFollow = aList
-                        recyclerViewFollower.adapter = UserFollowListAdapter(aListFollow);
+                        recyclerViewFollower.adapter = UserFollowListAdapter(aListFollow)
                     } else {
-                        Snackbar.make(rootView, R.string.nouser, Snackbar.LENGTH_LONG).show();
+                        Snackbar.make(rootView, R.string.nouser, Snackbar.LENGTH_LONG).show()
                     }
                 }
 
@@ -101,9 +101,9 @@ class UserFollowerFragment : Fragment() {
         } else {
             // network is not present then show message
             Snackbar.make(rootView, R.string.network_error, Snackbar.LENGTH_LONG)
-                .setAction("Retry", View.OnClickListener {
+                .setAction("Retry") {
                     fetchFollowers(context)
-                }).show();
+                }.show()
         }
     }
 
@@ -112,7 +112,7 @@ class UserFollowerFragment : Fragment() {
         val fragment = UsersDetailsFragment()
         val args = Bundle()
         args.putString("username", username)
-        fragment.setArguments(args)
+        fragment.arguments = args
         replaceFragment(fragment, R.id.fragment_container)
     }
 
