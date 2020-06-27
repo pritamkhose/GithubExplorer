@@ -41,6 +41,7 @@ open class UsersDetailsFragment : Fragment() {
     private var username = "";
     private val apiService = ApiClient.client!!.create(ApiInterface::class.java)
     private lateinit var userObj: UserDetailsResponse
+    private lateinit var mContext: Context
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +49,7 @@ open class UsersDetailsFragment : Fragment() {
         arguments?.let {
             username = it.getString("username", "pritamkhose")
         }
+        mContext = context!!
     }
 
     @SuppressLint("WrongConstant")
@@ -207,7 +209,7 @@ open class UsersDetailsFragment : Fragment() {
         if (url.length > 6 && url.contains("http")) {
             val builder = CustomTabsIntent.Builder()
             val customTabsIntent = builder.build()
-            customTabsIntent.launchUrl(getContext(), Uri.parse(url))
+            customTabsIntent.launchUrl(mContext, Uri.parse(url))
         }
     }
 

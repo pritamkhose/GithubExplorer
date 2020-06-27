@@ -36,6 +36,7 @@ open class UserReposFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private var username = "";
     private var pageno = 1;
+    private lateinit var mContext: Context
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +44,7 @@ open class UserReposFragment : Fragment() {
         arguments?.let {
             username = it.getString("username", "")
         }
+        mContext = context!!
     }
 
     @SuppressLint("WrongConstant")
@@ -174,7 +176,7 @@ open class UserReposFragment : Fragment() {
         if (url.length > 6 && url.contains("http")) {
             val builder = CustomTabsIntent.Builder()
             val customTabsIntent = builder.build()
-            customTabsIntent.launchUrl(getContext(), Uri.parse(url))
+            customTabsIntent.launchUrl(mContext, Uri.parse(url))
         }
     }
 
