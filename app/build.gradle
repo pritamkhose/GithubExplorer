@@ -8,11 +8,11 @@ apply plugin: 'kotlin-kapt'
 
 android {
     // Sdk and tools
-    compileSdkVersion 29
+    compileSdkVersion 30
     defaultConfig {
         applicationId "com.pritam.githubexplorer"
         minSdkVersion 16
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -56,13 +56,13 @@ dependencies {
     androidTestImplementation "androidx.room:room-testing:$room_version"
 
     // Lifecycle components
-//    implementation "android.arch.lifecycle:extensions:1.1.1"
-//    kapt "android.arch.lifecycle:compiler:1.1.1"
-//    kapt "com.android.databinding:compiler:3.1.4"
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.2.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+
+    // kapt components
+    kapt "com.android.databinding:compiler:3.1.4"
 
     // GSON
     implementation "com.google.code.gson:gson:2.8.5"
@@ -82,5 +82,10 @@ dependencies {
     testImplementation 'junit:junit:4.13'
     testImplementation "androidx.test.ext:junit:1.1.1"
     androidTestImplementation "androidx.test:runner:1.2.0"
+    androidTestImplementation 'androidx.test:rules:1.2.0'
     androidTestImplementation "androidx.test.espresso:espresso-core:3.2.0"
+}
+
+kapt {
+    generateStubs = true
 }

@@ -1,6 +1,8 @@
 package com.pritam.githubexplorer
 
 import com.pritam.githubexplorer.ui.fragment.UsersDetailsFragment
+import com.pritam.githubexplorer.utils.databinding.StringUtil
+import com.pritam.githubexplorer.utils.databinding.StringUtilKotlin
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -21,14 +23,15 @@ class ExampleUnitTest {
 
     @Test
     fun stringtoDateFormat_isCorrect(){
-        assertEquals("14 Jul 2019", usersDetailsFragment.stringtoDateFormat("2019-07-14T06:56:42Z"))
-        assertEquals("23 Jan 2018", usersDetailsFragment.stringtoDateFormat("2018-01-23T16:14:34Z"))
-
+        assertEquals("Joined at :  14 Jul 2019", StringUtil.stringtoDateFormat("Joined at :\u0020","2019-07-14T06:56:42Z"))
+        assertEquals("Last updated at :  23 Jan 2018", StringUtil.stringtoDateFormat("Last updated at :\u0020","2018-01-23T16:14:34Z"))
+        assertEquals("Joined at :  14 Jul 2019", StringUtilKotlin.stringtoDateFormat("Joined at :\u0020","2019-07-14T06:56:42Z"))
+        assertEquals("Last updated at :  23 Jan 2018", StringUtilKotlin.stringtoDateFormat("Last updated at :\u0020","2018-01-23T16:14:34Z"))
     }
 
     @Test
     fun stringtoDateFormat_isNotCorrect(){
-        assertNotEquals("2019/07/14T06:56:42Z", usersDetailsFragment.stringtoDateFormat("2019-07-14T06:56:42Z"))
+        assertNotEquals("2019/07/14T06:56:42Z", StringUtil.stringtoDateFormat("Joined at :\u0020","2019-07-14T06:56:42Z"))
     }
 
     @Test
