@@ -1,31 +1,229 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        xmlns:tools="http://schemas.android.com/tools">
 
-    <ScrollView
+    <data>
+
+        <import type="android.view.View" />
+
+        <import type="com.pritam.githubexplorer.utils.databinding.StringUtil" />
+
+        <import type="com.pritam.githubexplorer.utils.databinding.PicassoBindingAdapters" />
+
+        <variable
+                name="listener"
+                type="com.pritam.githubexplorer.ui.fragment.UsersDetailsFragment" />
+
+        <variable
+                name="userdetails"
+                type="com.pritam.githubexplorer.retrofit.model.UserDetailsResponse" />
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
-        <LinearLayout
+            android:orientation="vertical"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="vertical">
 
-            <androidx.cardview.widget.CardView
-                    android:id="@+id/card_view"
+            <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_margin="10dp"
-                    android:elevation="3dp"
-                    android:padding="5dp"
-                    tools:ignore="MissingConstraints">
+                    android:orientation="vertical">
+
+                <androidx.cardview.widget.CardView
+                        android:id="@+id/card_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_margin="10dp"
+                        android:elevation="3dp"
+                        android:padding="5dp"
+                        tools:ignore="MissingConstraints">
+
+                    <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                        <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:padding="5dp">
+
+                            <ImageView
+                                    android:id="@+id/im_avatar"
+                                    android:layout_width="100dp"
+                                    android:layout_height="100dp"
+                                    android:layout_marginBottom="5dp"
+                                    android:adjustViewBounds="true"
+                                    android:scaleType="fitXY"
+                                    app:imageResource="@{userdetails.avatar_url}"
+                                    tools:ignore="ContentDescription" />
+
+
+                            <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginLeft="5dp"
+                                    android:layout_marginRight="5dp"
+                                    android:orientation="vertical">
+
+                                <TextView
+                                        android:id="@+id/tv_name"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginBottom="5dp"
+                                        android:text="@{userdetails.name}"
+                                        android:textColor="@android:color/holo_blue_dark"
+                                        android:textSize="22sp"
+                                        android:textStyle="bold"
+                                        android:visibility="@{userdetails.name.length() > 1 ? View.VISIBLE : View.GONE}" />
+
+                                <TextView
+                                        android:id="@+id/tv_bio"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginStart="5dp"
+                                        android:layout_marginLeft="5dp"
+                                        android:layout_marginBottom="5dp"
+                                        android:text="@{userdetails.bio}"
+                                        android:textColor="@android:color/black"
+                                        android:textSize="18sp"
+                                        android:visibility="@{userdetails.bio.length() > 1 ? View.VISIBLE : View.GONE}" />
+
+                                <TextView
+                                        android:id="@+id/tv_location"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginStart="5dp"
+                                        android:layout_marginLeft="5dp"
+                                        android:layout_marginBottom="5dp"
+                                        android:text="@{userdetails.location}"
+                                        android:textColor="@android:color/black"
+                                        android:textSize="18sp"
+                                        android:visibility="@{userdetails.location.length() > 1 ? View.VISIBLE : View.GONE}" />
+
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <LinearLayout
+                                android:id="@+id/ln_email"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:padding="5dp"
+                                android:visibility="@{(userdetails.email != null &amp;&amp; String.valueOf(userdetails.email).length() > 1) ? View.VISIBLE : View.GONE}">
+
+                            <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:layout_marginLeft="5dp"
+                                    android:layout_marginRight="5dp"
+                                    android:adjustViewBounds="true"
+                                    android:scaleType="fitXY"
+                                    android:src="@mipmap/email96" />
+
+                            <TextView
+                                    android:id="@+id/tv_email"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:onClick="@{() -> listener.onClickEmail()}"
+                                    android:text="@{String.valueOf(userdetails.email)}"
+                                    android:textColor="@android:color/holo_blue_light"
+                                    android:textSize="18sp"
+                                    android:textStyle="bold" />
+
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                                android:id="@+id/ln_blog"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:padding="5dp"
+                                android:visibility="@{userdetails.blog.length() > 1 ? View.VISIBLE : View.GONE}">
+
+                            <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:layout_marginLeft="5dp"
+                                    android:layout_marginRight="5dp"
+                                    android:adjustViewBounds="true"
+                                    android:scaleType="fitXY"
+                                    android:src="@mipmap/info80" />
+
+                            <TextView
+                                    android:id="@+id/tv_blog"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:onClick="@{() -> listener.onClickBlog(userdetails.blog)}"
+                                    android:text="@{userdetails.blog}"
+                                    android:textColor="@android:color/holo_blue_light"
+                                    android:textSize="18sp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                                android:id="@+id/ln_created_at"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:padding="5dp">
+
+                            <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:layout_marginLeft="5dp"
+                                    android:layout_marginRight="5dp"
+                                    android:adjustViewBounds="true"
+                                    android:scaleType="fitXY"
+                                    android:src="@mipmap/create80" />
+
+                            <TextView
+                                    android:id="@+id/tv_created_at"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="@{StringUtil.stringtoDateFormat(@string/joinedAt ,userdetails.created_at)}"
+                                    android:textColor="@android:color/black"
+                                    android:textSize="18sp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                                android:id="@+id/ln_updated_at"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:padding="5dp">
+
+                            <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:layout_marginLeft="5dp"
+                                    android:layout_marginRight="5dp"
+                                    android:adjustViewBounds="true"
+                                    android:scaleType="fitXY"
+                                    android:src="@mipmap/clock80" />
+
+                            <TextView
+                                    android:id="@+id/tv_updated_at"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="@{StringUtil.stringtoDateFormat(@string/updatedAt, userdetails.updated_at)}"
+                                    android:textColor="@android:color/black"
+                                    android:textSize="18sp" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+
+                </androidx.cardview.widget.CardView>
 
                 <LinearLayout
                         android:layout_width="match_parent"
@@ -35,444 +233,282 @@
                     <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:padding="5dp">
+                            android:orientation="horizontal">
 
-                        <ImageView
-                                android:id="@+id/im_avatar"
-                                android:layout_width="100dp"
-                                android:layout_height="100dp"
-                                android:adjustViewBounds="true"
-                                android:scaleType="fitXY"
-                                android:layout_centerHorizontal="true"
-                                android:layout_centerVertical="true"
-                                android:layout_marginBottom="5dp"
-                                tools:ignore="ContentDescription"/>
-
-
-                        <LinearLayout
-                                android:orientation="vertical"
+                        <androidx.cardview.widget.CardView
+                                android:id="@+id/cardViewFollower"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginLeft="5dp"
-                                android:layout_marginRight="5dp">
+                                android:layout_gravity="center"
+                                android:layout_margin="10dp"
+                                android:layout_weight="0.5"
+                                android:elevation="3dp"
+                                android:onClick="@{() -> listener.followers()}"
+                                android:padding="5dp"
+                                tools:ignore="MissingConstraints">
 
-                            <TextView
-                                    android:id="@+id/tv_name"
+                            <LinearLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:textColor="@android:color/holo_blue_dark"
-                                    android:textSize="22sp"
-                                    android:textStyle="bold"
-                                    android:layout_marginBottom="5dp"/>
+                                    android:layout_margin="5dp"
+                                    android:layout_weight="0.25"
+                                    android:orientation="vertical"
+                                    android:padding="10dp">
 
-                            <TextView
-                                    android:id="@+id/tv_bio"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:textColor="@android:color/black"
-                                    android:textSize="18sp"
-                                    android:layout_marginLeft="5dp"
-                                    android:layout_marginBottom="5dp"/>
-
-                            <TextView
-                                    android:id="@+id/tv_location"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:textColor="@android:color/black"
-                                    android:textSize="18sp"
-                                    android:layout_marginLeft="5dp"
-                                    android:layout_marginBottom="5dp"/>
-
-                        </LinearLayout>
-                    </LinearLayout>
-
-                    <LinearLayout
-                            android:visibility="gone"
-                            android:id="@+id/ln_email"
-                            android:orientation="horizontal"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:padding="5dp">
-
-                        <ImageView
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:layout_marginLeft="5dp"
-                                android:layout_marginRight="5dp"
-                                android:adjustViewBounds="true"
-                                android:scaleType="fitXY"
-                                android:src="@mipmap/email96"/>
-
-                        <TextView
-                                android:id="@+id/tv_email"
-                                android:visibility="visible"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:textColor="@android:color/holo_blue_light"
-                                android:textSize="18sp"
-                                android:textStyle="bold"/>
-
-                    </LinearLayout>
-
-
-                    <LinearLayout
-                            android:visibility="gone"
-                            android:id="@+id/ln_blog"
-                            android:orientation="horizontal"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:padding="5dp">
-
-                        <ImageView
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:layout_marginLeft="5dp"
-                                android:layout_marginRight="5dp"
-                                android:adjustViewBounds="true"
-                                android:scaleType="fitXY"
-                                android:src="@mipmap/info80"/>
-
-                        <TextView
-                                android:id="@+id/tv_blog"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text=""
-                                android:textColor="@android:color/holo_blue_light"
-                                android:textSize="18sp"/>
-                    </LinearLayout>
-
-                    <LinearLayout
-                            android:visibility="gone"
-                            android:id="@+id/ln_created_at"
-                            android:orientation="horizontal"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:padding="5dp">
-
-                        <ImageView
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:layout_marginLeft="5dp"
-                                android:layout_marginRight="5dp"
-                                android:adjustViewBounds="true"
-                                android:scaleType="fitXY"
-                                android:src="@mipmap/create80"/>
-
-                        <TextView
-                                android:id="@+id/tv_created_at"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text=""
-                                android:textColor="@android:color/black"
-                                android:textSize="18sp"/>
-                    </LinearLayout>
-
-                    <LinearLayout
-                            android:visibility="gone"
-                            android:id="@+id/ln_updated_at"
-                            android:orientation="horizontal"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:padding="5dp">
-
-                        <ImageView
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:layout_marginLeft="5dp"
-                                android:layout_marginRight="5dp"
-                                android:adjustViewBounds="true"
-                                android:scaleType="fitXY"
-                                android:src="@mipmap/clock80"/>
-
-                        <TextView
-                                android:id="@+id/tv_updated_at"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text=""
-                                android:textColor="@android:color/black"
-                                android:textSize="18sp"/>
-                    </LinearLayout>
-
-                </LinearLayout>
-
-
-            </androidx.cardview.widget.CardView>
-
-            <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                    <androidx.cardview.widget.CardView
-                            android:id="@+id/cardViewFollower"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_margin="10dp"
-                            android:elevation="3dp"
-                            android:padding="5dp"
-                            android:layout_weight="0.5"
-                            tools:ignore="MissingConstraints">
-
-                        <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="0.25"
-                                android:layout_margin="5dp"
-                                android:padding="10dp"
-                                android:orientation="vertical">
-
-                            <TextView
-                                    android:id="@+id/tv_followers"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:text="0"
-                                    android:layout_centerVertical="true"
-                                    android:textAlignment="center"
-                                    android:textColor="@android:color/black"
-                                    android:textSize="20sp"
-                                    android:layout_marginBottom="5dp"/>
-
-                            <RelativeLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content">
-                                <LinearLayout
-                                        android:layout_width="wrap_content"
+                                <TextView
+                                        android:id="@+id/tv_followers"
+                                        android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:orientation="horizontal"
-                                        android:layout_centerHorizontal="true"
-                                        android:layout_centerVertical="true">
+                                        android:layout_marginBottom="5dp"
+                                        android:gravity="center_horizontal"
+                                        android:text="@{String.valueOf(userdetails.followers)}"
+                                        android:textAlignment="center"
+                                        android:textColor="@android:color/black"
+                                        android:textSize="20sp" />
 
-                                    <ImageView
-                                            android:layout_width="20dp"
-                                            android:layout_height="20dp"
-                                            android:layout_marginLeft="5dp"
-                                            android:layout_marginRight="5dp"
-                                            android:adjustViewBounds="true"
-                                            android:scaleType="fitXY"
-                                            android:src="@mipmap/adduser80"/>
+                                <RelativeLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content">
 
-                                    <TextView
+                                    <LinearLayout
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
-                                            android:text="Followers"
+                                            android:layout_centerHorizontal="true"
                                             android:layout_centerVertical="true"
-                                            android:textAlignment="center"
-                                            android:textColor="@android:color/black"
-                                            android:textSize="18sp"/>
+                                            android:orientation="horizontal">
 
-                                </LinearLayout>
-                            </RelativeLayout>
+                                        <ImageView
+                                                android:layout_width="20dp"
+                                                android:layout_height="20dp"
+                                                android:layout_marginLeft="5dp"
+                                                android:layout_marginRight="5dp"
+                                                android:adjustViewBounds="true"
+                                                android:scaleType="fitXY"
+                                                android:src="@mipmap/adduser80" />
 
-                        </LinearLayout>
-                    </androidx.cardview.widget.CardView>
+                                        <TextView
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:gravity="center_horizontal"
+                                                android:text="@string/followers"
+                                                android:textAlignment="center"
+                                                android:textColor="@android:color/black"
+                                                android:textSize="18sp" />
+
+                                    </LinearLayout>
+                                </RelativeLayout>
+
+                            </LinearLayout>
+                        </androidx.cardview.widget.CardView>
 
 
-                    <androidx.cardview.widget.CardView
-                            android:id="@+id/cardViewFollowing"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_margin="10dp"
-                            android:elevation="3dp"
-                            android:padding="5dp"
-                            android:layout_weight="0.5"
-                            tools:ignore="MissingConstraints">
-
-                        <LinearLayout
+                        <androidx.cardview.widget.CardView
+                                android:id="@+id/cardViewFollowing"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="0.25"
-                                android:layout_margin="5dp"
-                                android:padding="10dp"
-                                android:orientation="vertical">
+                                android:layout_gravity="center"
+                                android:layout_margin="10dp"
+                                android:layout_weight="0.5"
+                                android:elevation="3dp"
+                                android:onClick="@{() -> listener.following()}"
+                                android:padding="5dp"
+                                tools:ignore="MissingConstraints">
 
-                            <TextView
-                                    android:id="@+id/tv_following"
+                            <LinearLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:text="0"
-                                    android:layout_centerVertical="true"
-                                    android:textAlignment="center"
-                                    android:textColor="@android:color/black"
-                                    android:textSize="20sp"
-                                    android:layout_marginBottom="5dp"/>
+                                    android:layout_margin="5dp"
+                                    android:layout_weight="0.25"
+                                    android:orientation="vertical"
+                                    android:padding="10dp">
 
-                            <RelativeLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content">
-                                <LinearLayout
-                                        android:layout_width="wrap_content"
+                                <TextView
+                                        android:id="@+id/tv_following"
+                                        android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:orientation="horizontal"
-                                        android:layout_centerHorizontal="true"
-                                        android:layout_centerVertical="true">
+                                        android:layout_marginBottom="5dp"
+                                        android:gravity="center_horizontal"
+                                        android:text="@{String.valueOf(userdetails.following)}"
+                                        android:textAlignment="center"
+                                        android:textColor="@android:color/black"
+                                        android:textSize="20sp" />
 
-                                    <ImageView
-                                            android:layout_width="20dp"
-                                            android:layout_height="20dp"
-                                            android:layout_marginLeft="5dp"
-                                            android:layout_marginRight="5dp"
-                                            android:adjustViewBounds="true"
-                                            android:scaleType="fitXY"
-                                            android:src="@mipmap/checkeduser80"/>
-                                    <TextView
-                                            android:layout_width="match_parent"
+                                <RelativeLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content">
+
+                                    <LinearLayout
+                                            android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
-                                            android:text="Following"
+                                            android:layout_centerHorizontal="true"
                                             android:layout_centerVertical="true"
-                                            android:textAlignment="center"
-                                            android:textColor="@android:color/black"
-                                            android:textSize="18sp"
-                                    />
-                                </LinearLayout>
-                            </RelativeLayout>
-                        </LinearLayout>
-                    </androidx.cardview.widget.CardView>
-                </LinearLayout>
+                                            android:orientation="horizontal">
 
-                <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                                        <ImageView
+                                                android:layout_width="20dp"
+                                                android:layout_height="20dp"
+                                                android:layout_marginLeft="5dp"
+                                                android:layout_marginRight="5dp"
+                                                android:adjustViewBounds="true"
+                                                android:scaleType="fitXY"
+                                                android:src="@mipmap/checkeduser80" />
 
-                    <androidx.cardview.widget.CardView
-                            android:id="@+id/cardViewGists"
+                                        <TextView
+                                                android:layout_width="match_parent"
+                                                android:layout_height="wrap_content"
+                                                android:gravity="center_horizontal"
+                                                android:text="@string/following"
+                                                android:textAlignment="center"
+                                                android:textColor="@android:color/black"
+                                                android:textSize="18sp" />
+                                    </LinearLayout>
+                                </RelativeLayout>
+                            </LinearLayout>
+                        </androidx.cardview.widget.CardView>
+                    </LinearLayout>
+
+                    <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_margin="10dp"
-                            android:elevation="3dp"
-                            android:padding="5dp"
-                            android:layout_weight="0.5"
-                            tools:ignore="MissingConstraints">
+                            android:orientation="horizontal">
 
-                        <LinearLayout
+                        <androidx.cardview.widget.CardView
+                                android:id="@+id/cardViewGists"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="0.25"
-                                android:layout_margin="5dp"
-                                android:padding="10dp"
-                                android:orientation="vertical">
+                                android:layout_gravity="center"
+                                android:layout_margin="10dp"
+                                android:layout_weight="0.5"
+                                android:elevation="3dp"
+                                android:onClick="@{() -> listener.gist()}"
+                                android:padding="5dp"
+                                tools:ignore="MissingConstraints">
 
-                            <TextView
-                                    android:id="@+id/tv_public_gists"
+                            <LinearLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:text="0"
-                                    android:layout_centerVertical="true"
-                                    android:textAlignment="center"
-                                    android:textColor="@android:color/black"
-                                    android:textSize="20sp"
-                                    android:layout_marginBottom="5dp"/>
+                                    android:layout_margin="5dp"
+                                    android:layout_weight="0.25"
+                                    android:orientation="vertical"
+                                    android:padding="10dp">
 
-                            <RelativeLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content">
-                                <LinearLayout
-                                        android:layout_width="wrap_content"
+                                <TextView
+                                        android:id="@+id/tv_public_gists"
+                                        android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:orientation="horizontal"
-                                        android:layout_centerHorizontal="true"
-                                        android:layout_centerVertical="true">
+                                        android:layout_marginBottom="5dp"
+                                        android:gravity="center_horizontal"
+                                        android:text="@{String.valueOf(userdetails.public_gists)}"
+                                        android:textAlignment="center"
+                                        android:textColor="@android:color/black"
+                                        android:textSize="20sp" />
 
-                                    <ImageView
-                                            android:layout_width="20dp"
-                                            android:layout_height="20dp"
-                                            android:layout_marginLeft="5dp"
-                                            android:layout_marginRight="5dp"
-                                            android:adjustViewBounds="true"
-                                            android:scaleType="fitXY"
-                                            android:src="@mipmap/code80"/>
-                                    <TextView
-                                            android:layout_width="match_parent"
+                                <RelativeLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content">
+
+                                    <LinearLayout
+                                            android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
-                                            android:text="Public Gists"
+                                            android:layout_centerHorizontal="true"
                                             android:layout_centerVertical="true"
-                                            android:textAlignment="center"
-                                            android:textColor="@android:color/black"
-                                            android:textSize="18sp"/>
-                                </LinearLayout>
-                            </RelativeLayout>
-                        </LinearLayout>
-                    </androidx.cardview.widget.CardView>
+                                            android:orientation="horizontal">
 
-                    <androidx.cardview.widget.CardView
-                            android:id="@+id/cardViewRepo"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_margin="10dp"
-                            android:elevation="3dp"
-                            android:padding="5dp"
-                            android:layout_weight="0.5"
-                            tools:ignore="MissingConstraints">
+                                        <ImageView
+                                                android:layout_width="20dp"
+                                                android:layout_height="20dp"
+                                                android:layout_marginLeft="5dp"
+                                                android:layout_marginRight="5dp"
+                                                android:adjustViewBounds="true"
+                                                android:scaleType="fitXY"
+                                                android:src="@mipmap/code80" />
 
-                        <LinearLayout
+                                        <TextView
+                                                android:layout_width="match_parent"
+                                                android:layout_height="wrap_content"
+                                                android:gravity="center_horizontal"
+                                                android:text="@string/public_gists"
+                                                android:textAlignment="center"
+                                                android:textColor="@android:color/black"
+                                                android:textSize="18sp" />
+                                    </LinearLayout>
+                                </RelativeLayout>
+                            </LinearLayout>
+                        </androidx.cardview.widget.CardView>
+
+                        <androidx.cardview.widget.CardView
+                                android:id="@+id/cardViewRepo"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="0.25"
-                                android:layout_margin="5dp"
-                                android:padding="10dp"
-                                android:orientation="vertical">
-                            <TextView
-                                    android:id="@+id/tv_public_repos"
+                                android:layout_gravity="center"
+                                android:layout_margin="10dp"
+                                android:layout_weight="0.5"
+                                android:elevation="3dp"
+                                android:onClick="@{() -> listener.repos()}"
+                                android:padding="5dp"
+                                tools:ignore="MissingConstraints">
+
+                            <LinearLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:text="0"
-                                    android:layout_centerVertical="true"
-                                    android:layout_centerHorizontal="true"
-                                    android:textAlignment="center"
-                                    android:textColor="@android:color/black"
-                                    android:textSize="20sp"
-                                    android:layout_marginBottom="5dp"/>
+                                    android:layout_margin="5dp"
+                                    android:layout_weight="0.25"
+                                    android:orientation="vertical"
+                                    android:padding="10dp">
 
-                            <RelativeLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content">
-                                <LinearLayout
-                                        android:layout_width="wrap_content"
+                                <TextView
+                                        android:id="@+id/tv_public_repos"
+                                        android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:orientation="horizontal"
-                                        android:layout_centerHorizontal="true"
-                                        android:layout_centerVertical="true">
+                                        android:layout_marginBottom="5dp"
+                                        android:gravity="center_horizontal"
+                                        android:text="@{String.valueOf(userdetails.public_repos)}"
+                                        android:textAlignment="center"
+                                        android:textColor="@android:color/black"
+                                        android:textSize="20sp" />
 
-                                    <ImageView
-                                            android:layout_width="20dp"
-                                            android:layout_height="20dp"
-                                            android:layout_marginLeft="5dp"
-                                            android:layout_marginRight="5dp"
-                                            android:adjustViewBounds="true"
-                                            android:scaleType="fitXY"
-                                            android:src="@mipmap/repository80"/>
+                                <RelativeLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content">
 
-                                    <TextView
-                                            android:layout_width="match_parent"
+                                    <LinearLayout
+                                            android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
-                                            android:text="Repositories"
+                                            android:layout_centerHorizontal="true"
                                             android:layout_centerVertical="true"
-                                            android:textAlignment="center"
-                                            android:textColor="@android:color/black"
-                                            android:textSize="18sp"/>
+                                            android:orientation="horizontal">
 
-                                </LinearLayout>
-                            </RelativeLayout>
+                                        <ImageView
+                                                android:layout_width="20dp"
+                                                android:layout_height="20dp"
+                                                android:layout_marginLeft="5dp"
+                                                android:layout_marginRight="5dp"
+                                                android:adjustViewBounds="true"
+                                                android:scaleType="fitXY"
+                                                android:src="@mipmap/repository80" />
 
-                        </LinearLayout>
-                    </androidx.cardview.widget.CardView>
+                                        <TextView
+                                                android:layout_width="match_parent"
+                                                android:layout_height="wrap_content"
+                                                android:gravity="center_horizontal"
+                                                android:text="@string/repositories"
+                                                android:textAlignment="center"
+                                                android:textColor="@android:color/black"
+                                                android:textSize="18sp" />
 
+                                    </LinearLayout>
+                                </RelativeLayout>
+
+                            </LinearLayout>
+                        </androidx.cardview.widget.CardView>
+
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
             </LinearLayout>
 
-        </LinearLayout>
-
-    </ScrollView>
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+        </ScrollView>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>
