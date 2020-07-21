@@ -19,12 +19,11 @@ import com.pritam.githubexplorer.retrofit.rest.ApiClient
 import com.pritam.githubexplorer.retrofit.rest.ApiInterface
 import com.pritam.githubexplorer.utils.ConnectivityUtils
 import com.pritam.githubexplorer.utils.Constants
+import com.pritam.githubexplorer.utils.Constants.Companion.GIST_URL
 import kotlinx.android.synthetic.main.fragment_user_details.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.text.ParseException
-import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
 
@@ -32,14 +31,14 @@ import java.util.regex.Pattern
 open class UsersDetailsFragment : Fragment() {
 
     private val TAG = UsersDetailsFragment::class.java.simpleName
-    private var username = "";
+    private var username = ""
     private val apiService = ApiClient.client!!.create(ApiInterface::class.java)
     private lateinit var userObj: UserDetailsResponse
-    private lateinit var mBinding: FragmentUserDetailsBinding;
+    private lateinit var mBinding: FragmentUserDetailsBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true);
+        setHasOptionsMenu(true)
         arguments?.let {
             username = it.getString("username", "pritamkhose")
         }
@@ -52,15 +51,15 @@ open class UsersDetailsFragment : Fragment() {
     ): View? {
         // Define the listener for binding
         mBinding =
-            DataBindingUtil.inflate(inflater, R.layout.fragment_user_details, container, false);
+            DataBindingUtil.inflate(inflater, R.layout.fragment_user_details, container, false)
         mBinding.listener = this
 
         val context = activity as Context
-        activity?.setTitle(username.toUpperCase())
+        activity?.title = username.toUpperCase(Locale.ROOT)
 
         fetchdata(context)
 
-        return mBinding.getRoot();
+        return mBinding.root
     }
 
     fun followers() {
@@ -81,11 +80,15 @@ open class UsersDetailsFragment : Fragment() {
         }
     }
 
-    fun onclick_blog(txt: String) {
+    fun gist() {
+        openCustomTabs(GIST_URL + username)
+    }
+
+    fun onClickBlog(txt: String) {
         openCustomTabs(txt)
     }
 
-    fun onclick_email() {
+    fun onClickEmail() {
         sendEmail()
     }
 
@@ -96,12 +99,12 @@ open class UsersDetailsFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // Handle item selection
-        when (item.itemId) {
+        return when (item.itemId) {
             R.id.action_share -> {
                 shareData()
-                return true
+                true
             }
-            else -> return super.onOptionsItemSelected(item)
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
@@ -128,7 +131,7 @@ open class UsersDetailsFragment : Fragment() {
                             activity?.window?.decorView?.rootView!!,
                             R.string.error,
                             Snackbar.LENGTH_LONG
-                        ).show();
+                        ).show()
                     }
                 }
 
@@ -144,9 +147,9 @@ open class UsersDetailsFragment : Fragment() {
                 R.string.network_error,
                 Snackbar.LENGTH_LONG
             )
-                .setAction("Retry", View.OnClickListener {
+                .setAction("Retry") {
                     fetchdata(context)
-                }).show();
+                }.show()
         }
     }
 
@@ -155,57 +158,43 @@ open class UsersDetailsFragment : Fragment() {
         if (url.length > 6 && url.contains("http")) {
             val builder = CustomTabsIntent.Builder()
             val customTabsIntent = builder.build()
-            customTabsIntent.launchUrl(getContext(), Uri.parse(url))
+            context?.let { customTabsIntent.launchUrl(it, Uri.parse(url)) }
         }
     }
 
     private fun sendEmail() {
-        var email = tv_email.text.toString();
+        val email = tv_email.text.toString()
         if (email.length > 6 && isEmailValid(email)) {
             val intent = Intent(Intent.ACTION_SEND)
             intent.type = "text/html"
             intent.putExtra(Intent.EXTRA_EMAIL, email)
             intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name))
-            intent.putExtra(Intent.EXTRA_TEXT, "Hi " + username + ",\n\nThanks & Regards,\n\n")
+            intent.putExtra(Intent.EXTRA_TEXT, "Hi $username,\n\nThanks & Regards,\n\n")
             startActivity(Intent.createChooser(intent, "Send Email!"))
         }
     }
 
     fun isEmailValid(email: String): Boolean {
-        val EMAIL_REGEX = Pattern.compile(
+        val emailRegx = Pattern.compile(
             Constants.EMAIL_VERIFICATION,
             Pattern.CASE_INSENSITIVE
         )
-        return EMAIL_REGEX.matcher(email).matches()
+        return emailRegx.matcher(email).matches()
     }
 
     // Add data to the intent, the receiving app will decide
     private fun shareData() {
         val share = Intent(Intent.ACTION_SEND)
         share.type = "text/plain"
-        share.putExtra(Intent.EXTRA_SUBJECT, "Share " + username + " link!")
+        share.putExtra(Intent.EXTRA_SUBJECT, "Share $username link!")
         share.putExtra(Intent.EXTRA_TEXT, getString(R.string.giturl) + username)
-        startActivity(Intent.createChooser(share, "Share " + username + " link!"))
+        startActivity(Intent.createChooser(share, "Share $username link!"))
     }
 
-    fun openFragment(fragment: Fragment) {
+    private fun openFragment(fragment: Fragment) {
         val args = Bundle()
         args.putString("username", username)
-        fragment.setArguments(args)
+        fragment.arguments = args
         replaceFragment(fragment, R.id.fragment_container)
-    }
-
-    fun stringtoDateFormat(dates: String): String {
-        val DATE_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'"; //2019-07-14T06:56:42Z
-        val sdf = SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH)
-        var dateStr = dates
-        var date: Date
-        try {
-            date = SimpleDateFormat(DATE_FORMAT_PATTERN).parse(dates);
-            dateStr = sdf.format(date).toString()
-        } catch (e: ParseException) {
-            e.printStackTrace()
-        }
-        return dateStr
     }
 }

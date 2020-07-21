@@ -9,11 +9,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.annotation.Nullable
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.pritam.githubexplorer.R
+import com.pritam.githubexplorer.databinding.FragmentFollowBinding
+import com.pritam.githubexplorer.extensions.replaceFragment
 import com.pritam.githubexplorer.retrofit.model.UserFollowResponse
 import com.pritam.githubexplorer.retrofit.rest.ApiClient
 import com.pritam.githubexplorer.retrofit.rest.ApiInterface
@@ -23,15 +25,15 @@ import com.pritam.githubexplorer.utils.ConnectivityUtils
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import com.pritam.githubexplorer.extensions.replaceFragment
+import java.util.*
+import kotlin.collections.ArrayList
 
 class UserFollowerFragment : Fragment() {
 
-    private val TAG = UserFollowerFragment::class.java.simpleName
-    private lateinit var rootView: View
+    private val mtag = UserFollowerFragment::class.java.simpleName
+    private lateinit var mBinding: FragmentFollowBinding
     private var username = ""
     private val apiService = ApiClient.client!!.create(ApiInterface::class.java)
-    private lateinit var recyclerViewFollower: RecyclerView
     private var aListFollow: List<UserFollowResponse> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,22 +48,20 @@ class UserFollowerFragment : Fragment() {
         inflater: LayoutInflater, @Nullable container: ViewGroup?,
         @Nullable savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        rootView = inflater.inflate(R.layout.fragment_follow, container, false)
+        // Define the listener for binding
+        mBinding =
+            DataBindingUtil.inflate(inflater, R.layout.fragment_follow, container, false)
 
         val context = activity as Context
-        activity?.title = username.toUpperCase() + " Followers"
-
-        //Bind the recyclerview
-        recyclerViewFollower = rootView.findViewById(R.id.recyclerViewFollow) as RecyclerView
+        activity?.title = username.toUpperCase(Locale.ROOT) + " Followers"
 
         //Add a LayoutManager
-        recyclerViewFollower.layoutManager = LinearLayoutManager(context, LinearLayout.VERTICAL, false)
+        mBinding.recyclerViewFollow.layoutManager = LinearLayoutManager(context, LinearLayout.VERTICAL, false)
 
-        recyclerViewFollower.addOnItemTouchListener(
+        mBinding.recyclerViewFollow.addOnItemTouchListener(
             RecyclerTouchListener(
                 context,
-                recyclerViewFollower,
+                mBinding.recyclerViewFollow,
                 object : RecyclerTouchListener.ClickListener {
                     override fun onClick(view: View, position: Int) {
                         openUserSerachFragment(aListFollow[position].login)
@@ -74,7 +74,7 @@ class UserFollowerFragment : Fragment() {
         )
         fetchFollowers(context)
 
-        return rootView
+        return mBinding.root
     }
 
     private fun fetchFollowers(context: Context) {
@@ -85,22 +85,30 @@ class UserFollowerFragment : Fragment() {
                     call: Call<List<UserFollowResponse>>,
                     response: Response<List<UserFollowResponse>>
                 ) {
-                    var aList: List<UserFollowResponse>? = response.body()
-                    if (aList != null && aList.size > 0) {
+                    val aList: List<UserFollowResponse>? = response.body()
+                    if (aList != null && aList.isNotEmpty()) {
                         aListFollow = aList
-                        recyclerViewFollower.adapter = UserFollowListAdapter(aListFollow)
+                        mBinding.recyclerViewFollow.adapter = UserFollowListAdapter(aListFollow)
                     } else {
-                        Snackbar.make(rootView, R.string.nouser, Snackbar.LENGTH_LONG).show()
+                        Snackbar.make(
+                            activity?.window?.decorView?.rootView!!,
+                            R.string.nouser,
+                            Snackbar.LENGTH_LONG
+                        ).show()
                     }
                 }
 
                 override fun onFailure(call: Call<List<UserFollowResponse>>, t: Throwable) {
-                    Log.e(TAG, t.toString())
+                    Log.e(mtag, t.toString())
                 }
             })
         } else {
             // network is not present then show message
-            Snackbar.make(rootView, R.string.network_error, Snackbar.LENGTH_LONG)
+            Snackbar.make(
+                activity?.window?.decorView?.rootView!!,
+                R.string.network_error,
+                Snackbar.LENGTH_LONG
+            )
                 .setAction("Retry") {
                     fetchFollowers(context)
                 }.show()

@@ -61,8 +61,6 @@
                                     android:id="@+id/im_avatar"
                                     android:layout_width="100dp"
                                     android:layout_height="100dp"
-                                    android:layout_centerHorizontal="true"
-                                    android:layout_centerVertical="true"
                                     android:layout_marginBottom="5dp"
                                     android:adjustViewBounds="true"
                                     android:scaleType="fitXY"
@@ -92,6 +90,7 @@
                                         android:id="@+id/tv_bio"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
+                                        android:layout_marginStart="5dp"
                                         android:layout_marginLeft="5dp"
                                         android:layout_marginBottom="5dp"
                                         android:text="@{userdetails.bio}"
@@ -103,6 +102,7 @@
                                         android:id="@+id/tv_location"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
+                                        android:layout_marginStart="5dp"
                                         android:layout_marginLeft="5dp"
                                         android:layout_marginBottom="5dp"
                                         android:text="@{userdetails.location}"
@@ -134,8 +134,8 @@
                                     android:id="@+id/tv_email"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:text="@{userdetails.email}"
-                                    android:onClick="@{() -> listener.onclick_email()}"
+                                    android:onClick="@{() -> listener.onClickEmail()}"
+                                    android:text="@{String.valueOf(userdetails.email)}"
                                     android:textColor="@android:color/holo_blue_light"
                                     android:textSize="18sp"
                                     android:textStyle="bold" />
@@ -164,8 +164,8 @@
                                     android:id="@+id/tv_blog"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
+                                    android:onClick="@{() -> listener.onClickBlog(userdetails.blog)}"
                                     android:text="@{userdetails.blog}"
-                                    android:onClick="@{() -> listener.onclick_blog(userdetails.blog)}"
                                     android:textColor="@android:color/holo_blue_light"
                                     android:textSize="18sp" />
                         </LinearLayout>
@@ -259,8 +259,8 @@
                                         android:id="@+id/tv_followers"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:layout_centerVertical="true"
                                         android:layout_marginBottom="5dp"
+                                        android:gravity="center_horizontal"
                                         android:text="@{String.valueOf(userdetails.followers)}"
                                         android:textAlignment="center"
                                         android:textColor="@android:color/black"
@@ -289,8 +289,8 @@
                                         <TextView
                                                 android:layout_width="wrap_content"
                                                 android:layout_height="wrap_content"
-                                                android:layout_centerVertical="true"
-                                                android:text="Followers"
+                                                android:gravity="center_horizontal"
+                                                android:text="@string/followers"
                                                 android:textAlignment="center"
                                                 android:textColor="@android:color/black"
                                                 android:textSize="18sp" />
@@ -326,8 +326,8 @@
                                         android:id="@+id/tv_following"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:layout_centerVertical="true"
                                         android:layout_marginBottom="5dp"
+                                        android:gravity="center_horizontal"
                                         android:text="@{String.valueOf(userdetails.following)}"
                                         android:textAlignment="center"
                                         android:textColor="@android:color/black"
@@ -356,8 +356,8 @@
                                         <TextView
                                                 android:layout_width="match_parent"
                                                 android:layout_height="wrap_content"
-                                                android:layout_centerVertical="true"
-                                                android:text="Following"
+                                                android:gravity="center_horizontal"
+                                                android:text="@string/following"
                                                 android:textAlignment="center"
                                                 android:textColor="@android:color/black"
                                                 android:textSize="18sp" />
@@ -380,6 +380,7 @@
                                 android:layout_margin="10dp"
                                 android:layout_weight="0.5"
                                 android:elevation="3dp"
+                                android:onClick="@{() -> listener.gist()}"
                                 android:padding="5dp"
                                 tools:ignore="MissingConstraints">
 
@@ -395,8 +396,8 @@
                                         android:id="@+id/tv_public_gists"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:layout_centerVertical="true"
                                         android:layout_marginBottom="5dp"
+                                        android:gravity="center_horizontal"
                                         android:text="@{String.valueOf(userdetails.public_gists)}"
                                         android:textAlignment="center"
                                         android:textColor="@android:color/black"
@@ -425,8 +426,8 @@
                                         <TextView
                                                 android:layout_width="match_parent"
                                                 android:layout_height="wrap_content"
-                                                android:layout_centerVertical="true"
-                                                android:text="Public Gists"
+                                                android:gravity="center_horizontal"
+                                                android:text="@string/public_gists"
                                                 android:textAlignment="center"
                                                 android:textColor="@android:color/black"
                                                 android:textSize="18sp" />
@@ -459,9 +460,8 @@
                                         android:id="@+id/tv_public_repos"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:layout_centerHorizontal="true"
-                                        android:layout_centerVertical="true"
                                         android:layout_marginBottom="5dp"
+                                        android:gravity="center_horizontal"
                                         android:text="@{String.valueOf(userdetails.public_repos)}"
                                         android:textAlignment="center"
                                         android:textColor="@android:color/black"
@@ -490,8 +490,8 @@
                                         <TextView
                                                 android:layout_width="match_parent"
                                                 android:layout_height="wrap_content"
-                                                android:layout_centerVertical="true"
-                                                android:text="Repositories"
+                                                android:gravity="center_horizontal"
+                                                android:text="@string/repositories"
                                                 android:textAlignment="center"
                                                 android:textColor="@android:color/black"
                                                 android:textSize="18sp" />

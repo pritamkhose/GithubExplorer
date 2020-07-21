@@ -9,12 +9,12 @@ import android.util.Log
 import android.view.*
 import android.widget.LinearLayout
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
 import com.pritam.githubexplorer.R
+import com.pritam.githubexplorer.databinding.FragmentUserReposBinding
 import com.pritam.githubexplorer.retrofit.model.UserReposResponse
 import com.pritam.githubexplorer.retrofit.rest.ApiClient
 import com.pritam.githubexplorer.retrofit.rest.ApiInterface
@@ -25,46 +25,46 @@ import com.pritam.githubexplorer.utils.ConnectivityUtils
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 open class UserReposFragment : Fragment() {
 
-    private val TAG = UserReposFragment::class.java.simpleName
-    private lateinit var rootView: View
+    private val mtag = UserReposFragment::class.java.simpleName
+    private lateinit var mBinding: FragmentUserReposBinding
     private var aList: ArrayList<UserReposResponse> = ArrayList()
-    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    private lateinit var recyclerView: RecyclerView
-    private var username = "";
-    private var pageno = 1;
+    private var username = ""
+    private var pageno = 1
+    
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true);
+        setHasOptionsMenu(true)
         arguments?.let {
             username = it.getString("username", "")
         }
     }
-
+    
     @SuppressLint("WrongConstant")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        rootView = inflater.inflate(R.layout.fragment_user_repos, container, false)
+        // Define the listener for binding
+        mBinding =
+            DataBindingUtil.inflate(inflater, R.layout.fragment_user_repos, container, false)
 
         val context = activity as Context
-        activity?.setTitle(username.toUpperCase() + " Repositories");
-
-        //Bind the recyclerview
-        recyclerView = rootView.findViewById(R.id.recyclerView) as RecyclerView
+        activity?.title = username.toUpperCase(Locale.ROOT) + " Repositories"
 
         //Add a LayoutManager
-        recyclerView.layoutManager = LinearLayoutManager(context, LinearLayout.VERTICAL, false)
+        mBinding.recyclerView.layoutManager = LinearLayoutManager(context, LinearLayout.VERTICAL, false)
 
-        recyclerView.addOnItemTouchListener(
+        mBinding.recyclerView.addOnItemTouchListener(
             RecyclerTouchListener(
                 context,
-                recyclerView,
+                mBinding.recyclerView,
                 object : RecyclerTouchListener.ClickListener {
                     override fun onClick(view: View, position: Int) {
                         openCustomTabs(aList[position].html_url)
@@ -75,27 +75,26 @@ open class UserReposFragment : Fragment() {
                 })
         )
 
-        recyclerView.addOnScrollListener(object : EndlessRecyclerOnScrollListener() {
+        mBinding.recyclerView.addOnScrollListener(object : EndlessRecyclerOnScrollListener() {
             override fun onLoadMore() {
-                pageno = pageno + 1
+                pageno += 1
                 fetchdata(context)
             }
         })
-
-        swipeRefreshLayout = rootView.findViewById(R.id.swipe_refresh_layout) as SwipeRefreshLayout
-        swipeRefreshLayout.setColorSchemeResources(
+        
+        mBinding.swipeRefreshLayout.setColorSchemeResources(
             R.color.blue,
             R.color.green,
             R.color.orange,
             R.color.red
         )
-        swipeRefreshLayout.setOnRefreshListener {
-            pageno = 1;
+        mBinding.swipeRefreshLayout.setOnRefreshListener {
+            pageno = 1
             fetchdata(context)
         }
         fetchdata(context)
 
-        return rootView
+        return mBinding.root
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -105,12 +104,12 @@ open class UserReposFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // Handle item selection
-        when (item.itemId) {
+        return when (item.itemId) {
             R.id.action_share -> {
                 shareData()
-                return true
+                true
             }
-            else -> return super.onOptionsItemSelected(item)
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
@@ -118,16 +117,16 @@ open class UserReposFragment : Fragment() {
     private fun shareData() {
         val share = Intent(Intent.ACTION_SEND)
         share.type = "text/plain"
-        share.putExtra(Intent.EXTRA_SUBJECT, "Share " + username + " link!")
+        share.putExtra(Intent.EXTRA_SUBJECT, "Share $username link!")
         share.putExtra(Intent.EXTRA_TEXT, getString(R.string.giturl) + username)
-        startActivity(Intent.createChooser(share, "Share " + username + " link!"))
+        startActivity(Intent.createChooser(share, "Share $username link!"))
     }
 
     private fun fetchdata(context: Context) {
         if (ConnectivityUtils.isNetworkAvailable(context)) {
-            if(!swipeRefreshLayout.isRefreshing) {
+            if(!mBinding.swipeRefreshLayout.isRefreshing) {
                 // Show swipe to refresh icon animation
-                swipeRefreshLayout.isRefreshing = true
+                mBinding.swipeRefreshLayout.isRefreshing = true
                 // network is present so will load updated data
                 val apiService = ApiClient.client!!.create(ApiInterface::class.java)
                 val call = apiService.getUserRepos(username, "updated", 25, pageno)
@@ -137,36 +136,44 @@ open class UserReposFragment : Fragment() {
                         response: Response<ArrayList<UserReposResponse>>
                     ) {
                         // Hide swipe to refresh icon animation
-                        swipeRefreshLayout.isRefreshing = false
+                        mBinding.swipeRefreshLayout.isRefreshing = false
                         val alList: ArrayList<UserReposResponse>? = response.body()
                         if (alList !== null && alList.size > 0) {
                             //creating adapter and item adding to adapter of recyclerview
                             if(pageno == 1){
-                                aList = alList;
-                                recyclerView.adapter = UserRepoListAdapter(aList);
+                                aList = alList
+                                mBinding.recyclerView.adapter = UserRepoListAdapter(aList)
                             } else {
-                                aList.addAll(alList);
+                                aList.addAll(alList)
                             }
                             if (aList.size > 0)
-                                (recyclerView.adapter as UserRepoListAdapter).notifyDataSetChanged();
+                                (mBinding.recyclerView.adapter as UserRepoListAdapter).notifyDataSetChanged()
                         } else {
-                            Snackbar.make(rootView, R.string.nouser, Snackbar.LENGTH_LONG).show();
+                            Snackbar.make(
+                                activity?.window?.decorView?.rootView!!,
+                                R.string.nouser,
+                                Snackbar.LENGTH_LONG
+                            ).show()
                         }
                     }
 
                     override fun onFailure(call: Call<ArrayList<UserReposResponse>>, t: Throwable) {
                         // Log error here since request failed
-                        Log.e(TAG, t.toString())
-                        swipeRefreshLayout.isRefreshing = false
+                        Log.e(mtag, t.toString())
+                        mBinding.swipeRefreshLayout.isRefreshing = false
                     }
                 })
             }
         } else {
             // network is not present then show message
-            Snackbar.make(rootView, R.string.network_error, Snackbar.LENGTH_LONG)
+            Snackbar.make(
+                activity?.window?.decorView?.rootView!!,
+                R.string.network_error,
+                Snackbar.LENGTH_LONG
+            )
                 .setAction("Retry") {
                     fetchdata(context)
-                }.show();
+                }.show()
         }
     }
 
@@ -174,7 +181,7 @@ open class UserReposFragment : Fragment() {
         if (url.length > 6 && url.contains("http")) {
             val builder = CustomTabsIntent.Builder()
             val customTabsIntent = builder.build()
-            customTabsIntent.launchUrl(getContext(), Uri.parse(url))
+            context?.let { customTabsIntent.launchUrl(it, Uri.parse(url)) }
         }
     }
 

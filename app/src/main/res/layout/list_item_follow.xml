@@ -7,8 +7,8 @@
         <import type="com.pritam.githubexplorer.utils.databinding.PicassoBindingAdapters" />
 
         <variable
-                name="item"
-                type="com.pritam.githubexplorer.retrofit.model.Item" />
+                name="user"
+                type="com.pritam.githubexplorer.retrofit.model.UserFollowResponse" />
     </data>
 
     <LinearLayout
@@ -34,7 +34,7 @@
                         android:contentDescription="@string/image"
                         android:padding="5dp"
                         android:scaleType="fitXY"
-                        app:imageResource="@{item.avatar_url}" />
+                        app:imageResource="@{user.avatar_url}" />
 
                 <TextView
                         android:id="@+id/textViewUsername"
@@ -43,7 +43,7 @@
                         android:layout_centerVertical="true"
                         android:layout_marginStart="80dp"
                         android:layout_marginLeft="80dp"
-                        android:text="@{item.login}"
+                        android:text="@{user.login}"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
 
             </RelativeLayout>
