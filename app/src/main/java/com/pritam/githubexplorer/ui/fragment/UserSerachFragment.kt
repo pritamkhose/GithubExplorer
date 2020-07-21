@@ -216,7 +216,7 @@ class UserSerachFragment : Fragment() {
         val args = Bundle()
         args.putString("username", username)
         userDetailFragment.setArguments(args)
-        val fragmentTransaction = fragmentManager!!.beginTransaction()
+        val fragmentTransaction = requireFragmentManager().beginTransaction()
         fragmentTransaction.replace(R.id.fragment_container, userDetailFragment)
         fragmentTransaction.addToBackStack(null)
         fragmentTransaction.commit()
