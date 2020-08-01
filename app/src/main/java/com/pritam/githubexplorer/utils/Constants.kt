@@ -1,6 +1,6 @@
 package com.pritam.githubexplorer.utils
 
-public class Constants {
+class Constants {
 
     // static constants
     companion object {

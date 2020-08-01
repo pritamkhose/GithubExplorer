@@ -9,7 +9,7 @@ import com.pritam.githubexplorer.R
 class SplashScreenActivity : AppCompatActivity() {
 
     private var mDelayHandler: Handler? = null
-    private val SPLASH_DELAY: Long = 3000 //3 seconds
+    private val splashDelay: Long = 3000 //3 seconds
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,7 +19,7 @@ class SplashScreenActivity : AppCompatActivity() {
         mDelayHandler = Handler()
 
         //Navigate with delay
-        mDelayHandler!!.postDelayed(mRunnable, SPLASH_DELAY)
+        mDelayHandler!!.postDelayed(mRunnable, splashDelay)
     }
 
     private val mRunnable: Runnable = Runnable {

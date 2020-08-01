@@ -8,7 +8,7 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.pritam.githubexplorer.R
 import com.pritam.githubexplorer.extensions.addFragment
-import com.pritam.githubexplorer.ui.fragment.UserSerachFragment
+import com.pritam.githubexplorer.ui.fragment.UserSearchFragment
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
-        val userSerachFragment = UserSerachFragment()
+        val userSerachFragment = UserSearchFragment()
         addFragment(userSerachFragment, R.id.fragment_container)
 
     }

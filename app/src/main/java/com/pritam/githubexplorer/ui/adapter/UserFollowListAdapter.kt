@@ -8,7 +8,7 @@ import com.pritam.githubexplorer.R
 import com.pritam.githubexplorer.databinding.ListItemFollowBinding
 import com.pritam.githubexplorer.retrofit.model.UserFollowResponse
 
-class UserFollowListAdapter(private val userList: List<UserFollowResponse>) : RecyclerView.Adapter<UserFollowListAdapter.ViewHolder>() {
+class UserFollowListAdapter(private val userList: ArrayList<UserFollowResponse>) : RecyclerView.Adapter<UserFollowListAdapter.ViewHolder>() {
 
     //this method is returning the view for each item in the list
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -26,6 +26,17 @@ class UserFollowListAdapter(private val userList: List<UserFollowResponse>) : Re
     //this method is giving the size of the list
     override fun getItemCount(): Int {
         return userList.size
+    }
+
+    fun addUsers(users: List<UserFollowResponse>) {
+        this.userList.apply {
+            clear()
+            addAll(users)
+        }
+    }
+
+    fun getUsers(position: Int): UserFollowResponse {
+        return userList[position]
     }
 
     //the class is holding the list view

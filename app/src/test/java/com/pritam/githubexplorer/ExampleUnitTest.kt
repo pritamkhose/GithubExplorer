@@ -14,7 +14,7 @@ import org.junit.Assert.*
  */
 class ExampleUnitTest {
 
-    var usersDetailsFragment = UsersDetailsFragment()
+    private var usersDetailsFragment = UsersDetailsFragment()
 
     @Test
     fun addition_isCorrect() {

@@ -9,15 +9,6 @@ import com.squareup.picasso.Picasso;
 public class PicassoBindingAdaptersJava {
 
     @BindingAdapter("imageResource")
-    public static void setImageResource(ImageView view, int imageUrl){
-        Picasso.get()
-                .load(imageUrl)
-                .placeholder(R.mipmap.no_image_placeholder)
-                .into(view);
-    }
-
-
-    @BindingAdapter("imageResource")
     public static void setImageResource(ImageView view, String imageUrl){
 
         if (imageUrl != null && imageUrl.length() > 5){

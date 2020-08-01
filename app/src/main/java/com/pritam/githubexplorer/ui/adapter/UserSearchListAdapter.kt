@@ -9,7 +9,7 @@ import com.pritam.githubexplorer.databinding.ListItemUserSerachBinding
 import com.pritam.githubexplorer.retrofit.model.Item
 
 
-class UserSerachListAdapter(private val userList: ArrayList<Item>) : RecyclerView.Adapter<UserSerachListAdapter.ViewHolder>() {
+class UserSearchListAdapter(private val userList: ArrayList<Item>) : RecyclerView.Adapter<UserSearchListAdapter.ViewHolder>() {
 
     //this method is returning the view for each item in the list
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -27,6 +27,22 @@ class UserSerachListAdapter(private val userList: ArrayList<Item>) : RecyclerVie
     //this method is giving the size of the list
     override fun getItemCount(): Int {
         return userList.size
+    }
+
+    fun addItem(users: List<Item>) {
+        this.userList.apply {
+            addAll(users)
+        }
+    }
+
+    fun clearItem() {
+        this.userList.apply {
+            clear()
+        }
+    }
+
+    fun getItem(position: Int): Item {
+        return userList[position]
     }
 
     //the class is holding the list view

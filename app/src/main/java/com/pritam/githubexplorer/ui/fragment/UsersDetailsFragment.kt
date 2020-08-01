@@ -1,40 +1,37 @@
 package com.pritam.githubexplorer.ui.fragment
 
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.annotation.Nullable
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.snackbar.Snackbar
 import com.pritam.githubexplorer.R
 import com.pritam.githubexplorer.databinding.FragmentUserDetailsBinding
 import com.pritam.githubexplorer.extensions.replaceFragment
+import com.pritam.githubexplorer.retrofit.model.Status
 import com.pritam.githubexplorer.retrofit.model.UserDetailsResponse
 import com.pritam.githubexplorer.retrofit.rest.ApiClient
-import com.pritam.githubexplorer.retrofit.rest.ApiInterface
+import com.pritam.githubexplorer.retrofit.rest.ApiHelper
+import com.pritam.githubexplorer.ui.base.ViewModelFactory
+import com.pritam.githubexplorer.ui.viewmodel.UserDetailsViewModel
 import com.pritam.githubexplorer.utils.ConnectivityUtils
 import com.pritam.githubexplorer.utils.Constants
 import com.pritam.githubexplorer.utils.Constants.Companion.GIST_URL
 import kotlinx.android.synthetic.main.fragment_user_details.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.util.*
 import java.util.regex.Pattern
 
 
-open class UsersDetailsFragment : Fragment() {
+class UsersDetailsFragment : Fragment() {
 
-    private val TAG = UsersDetailsFragment::class.java.simpleName
     private var username = ""
-    private val apiService = ApiClient.client!!.create(ApiInterface::class.java)
-    private lateinit var userObj: UserDetailsResponse
     private lateinit var mBinding: FragmentUserDetailsBinding
+    private lateinit var viewModel: UserDetailsViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +39,7 @@ open class UsersDetailsFragment : Fragment() {
         arguments?.let {
             username = it.getString("username", "pritamkhose")
         }
+        setupViewModel()
     }
 
     @Nullable
@@ -54,34 +52,34 @@ open class UsersDetailsFragment : Fragment() {
             DataBindingUtil.inflate(inflater, R.layout.fragment_user_details, container, false)
         mBinding.listener = this
 
-        val context = activity as Context
-        activity?.title = username.toUpperCase(Locale.ROOT)
-
-        fetchdata(context)
+        setupUI()
+        setupObservers()
 
         return mBinding.root
     }
 
     fun followers() {
-        if (userObj.followers > 0) {
+        if (mBinding.userdetails?.followers!! > 0) {
             openFragment(UserFollowerFragment())
         }
     }
 
     fun following() {
-        if (userObj.following > 0) {
+        if (mBinding.userdetails?.following!! > 0) {
             openFragment(UserFollowingFragment())
         }
     }
 
     fun repos() {
-        if (userObj.public_repos > 0) {
+        if (mBinding.userdetails?.public_repos!! > 0) {
             openFragment(UserReposFragment())
         }
     }
 
     fun gist() {
-        openCustomTabs(GIST_URL + username)
+        if (mBinding.userdetails?.public_gists!! > 0) {
+            openCustomTabs(GIST_URL + username)
+        }
     }
 
     fun onClickBlog(txt: String) {
@@ -108,51 +106,75 @@ open class UsersDetailsFragment : Fragment() {
         }
     }
 
+    private fun setupViewModel() {
+        viewModel = ViewModelProviders.of(
+            this,
+            ViewModelFactory(ApiHelper(ApiClient.apiService))
+        ).get(UserDetailsViewModel::class.java)
+    }
 
-    private fun fetchdata(context: Context) {
-        if (ConnectivityUtils.isNetworkAvailable(context)) {
-            // network is present so will load updated data
-            val call = apiService.getUserDetails(username)
-            call.enqueue(object : Callback<UserDetailsResponse> {
-                override fun onResponse(
-                    call: Call<UserDetailsResponse>,
-                    response: Response<UserDetailsResponse>
-                ) {
-                    val aObj: UserDetailsResponse? = response.body()
-                    if (aObj !== null) {
-                        try {
-                            userObj = aObj
-                            mBinding.userdetails = aObj
-                        } catch (e: Exception) {
-                            e.printStackTrace()
+    private fun setupUI() {
+        activity?.title = username.toUpperCase(Locale.ROOT)
+
+        mBinding.swipeRefreshLayout.setColorSchemeResources(
+            R.color.blue,
+            R.color.green,
+            R.color.orange,
+            R.color.red
+        )
+        mBinding.swipeRefreshLayout.setOnRefreshListener {
+            setupObservers()
+        }
+    }
+
+    private fun setupObservers() {
+        if (activity?.baseContext?.let { ConnectivityUtils.isNetworkAvailable(it) }!!) {
+            viewModel.getUserDetails(username)
+                .observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+                    it?.let { resource ->
+                        when (resource.status) {
+                            Status.SUCCESS -> {
+                                mBinding.swipeRefreshLayout.isRefreshing = false
+                                resource.data?.let { user -> retrieveData(user) }
+                            }
+                            Status.ERROR -> {
+                                mBinding.swipeRefreshLayout.isRefreshing = false
+                                Snackbar.make(
+                                    activity?.window?.decorView?.rootView!!,
+                                    R.string.error,
+                                    Snackbar.LENGTH_LONG
+                                ).show()
+                            }
+                            Status.LOADING -> {
+                                mBinding.swipeRefreshLayout.isRefreshing = true
+                            }
                         }
-                    } else {
-                        Snackbar.make(
-                            activity?.window?.decorView?.rootView!!,
-                            R.string.error,
-                            Snackbar.LENGTH_LONG
-                        ).show()
                     }
-                }
-
-                override fun onFailure(call: Call<UserDetailsResponse>, t: Throwable) {
-                    // Log error here since request failed
-                    Log.e(TAG, t.toString())
-                }
-            })
+                })
         } else {
             // network is not present then show message
             Snackbar.make(
                 activity?.window?.decorView?.rootView!!,
                 R.string.network_error,
                 Snackbar.LENGTH_LONG
-            )
-                .setAction("Retry") {
-                    fetchdata(context)
-                }.show()
+            ).setAction("Retry") {
+                setupObservers()
+            }.show()
         }
     }
 
+    private fun retrieveData(users: UserDetailsResponse) {
+        try {
+            mBinding.userdetails = users
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Snackbar.make(
+                activity?.window?.decorView?.rootView!!,
+                R.string.error,
+                Snackbar.LENGTH_LONG
+            ).show()
+        }
+    }
 
     private fun openCustomTabs(url: String) {
         if (url.length > 6 && url.contains("http")) {
@@ -198,3 +220,4 @@ open class UsersDetailsFragment : Fragment() {
         replaceFragment(fragment, R.id.fragment_container)
     }
 }
+

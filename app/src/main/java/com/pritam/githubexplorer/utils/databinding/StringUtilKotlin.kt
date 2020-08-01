@@ -1,7 +1,5 @@
 package com.pritam.githubexplorer.utils.databinding
 
-import java.lang.Exception
-import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -9,15 +7,6 @@ class StringUtilKotlin {
 
     companion object
     {
-        @JvmStatic
-        fun getQuantityString(quantity: Int): String {
-            return "Qty: $quantity"
-        }
-
-        @JvmStatic
-        fun convertIntToString(value: Int): String {
-            return "($value)"
-        }
 
         @JvmStatic
         fun stringtoDateFormat(info: String?, dates: String): String {
@@ -33,10 +22,10 @@ class StringUtilKotlin {
                 e.printStackTrace()
             }
 
-            if (dateStr !== "" && info != null && info.length > 0) {
-                info = "$info "
+            info = if (dateStr !== "" && info != null && info.isNotEmpty()) {
+                "$info "
             } else {
-                info = ""
+                ""
             }
             return info + dateStr
         }

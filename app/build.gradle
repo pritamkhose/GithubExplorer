@@ -84,6 +84,25 @@ dependencies {
     androidTestImplementation "androidx.test:runner:1.2.0"
     androidTestImplementation 'androidx.test:rules:1.2.0'
     androidTestImplementation "androidx.test.espresso:espresso-core:3.2.0"
+
+
+    //    testImplementation deps.arch_core.testing
+    //    androidTestImplementation deps.arch_core.testing
+//    def arch_core = "2.2.5"
+//    testImplementation "androidx.arch.core:core-runtime:$arch_core"
+//    androidTestImplementation "androidx.arch.core:core-testing:2.2.5"
+    testImplementation group: 'androidx.arch.core', name: 'core-testing', version: '2.1.0'
+
+    //    testImplementation deps.mock_web_server
+    //    testImplementation deps.mockito.core
+    //    androidTestImplementation deps.mockito.core
+    //    androidTestImplementation deps.mockito.android
+    testImplementation "com.squareup.okhttp3:mockwebserver:4.7.2" // 3.8.1
+    testImplementation "org.mockito:mockito-core:3.3.3" //2.25.0
+    androidTestImplementation "org.mockito:mockito-core:3.3.3" //2.25.0
+//    androidTestImplementation "org.mockito:mockito-all:1.10.19"
+    androidTestImplementation "org.mockito:mockito-android:2.25.0"
+
 }
 
 kapt {

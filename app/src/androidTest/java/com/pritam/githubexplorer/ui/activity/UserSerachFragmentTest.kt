@@ -1,10 +1,8 @@
 package com.pritam.githubexplorer.ui.activity
 
-
 import android.view.View
 import android.view.ViewGroup
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.filters.LargeTest
@@ -22,14 +20,14 @@ import org.junit.runner.RunWith
 
 @LargeTest
 @RunWith(AndroidJUnit4::class)
-class UserSerachFragmentTest {
+class UserSearchFragmentTest {
 
     @Rule
     @JvmField
     var mActivityTestRule = ActivityTestRule(SplashScreenActivity::class.java)
 
     @Test
-    fun userSerachFragmentTest2() {
+    fun userSearchFragmentTest() {
         // Added a sleep statement to match the app's execution delay.
         // The recommended way to handle such scenarios is to use Espresso idling resources:
         // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
@@ -37,7 +35,7 @@ class UserSerachFragmentTest {
 
         val appCompatEditText = onView(
             allOf(
-                withId(R.id.textSearch),
+                withId(R.id.text_search),
                 childAtPosition(
                     childAtPosition(
                         withClassName(`is`("android.widget.LinearLayout")),
@@ -52,7 +50,7 @@ class UserSerachFragmentTest {
 
         val appCompatEditText2 = onView(
             allOf(
-                withId(R.id.textSearch), withText("pritam"),
+                withId(R.id.text_search), withText("pritam"),
                 childAtPosition(
                     childAtPosition(
                         withClassName(`is`("android.widget.LinearLayout")),
@@ -67,7 +65,7 @@ class UserSerachFragmentTest {
 
         val appCompatEditText3 = onView(
             allOf(
-                withId(R.id.textSearch), withText("pritam"),
+                withId(R.id.text_search), withText("pritam"),
                 childAtPosition(
                     childAtPosition(
                         withClassName(`is`("android.widget.LinearLayout")),
@@ -84,7 +82,7 @@ class UserSerachFragmentTest {
 
         val appCompatEditText5 = onView(
             allOf(
-                withId(R.id.textSearch), withText("pritam"),
+                withId(R.id.text_search), withText("pritam"),
                 childAtPosition(
                     childAtPosition(
                         withClassName(`is`("android.widget.LinearLayout")),
@@ -99,7 +97,7 @@ class UserSerachFragmentTest {
 
         val appCompatEditText6 = onView(
             allOf(
-                withId(R.id.textSearch), withText("Google"),
+                withId(R.id.text_search), withText("Google"),
                 childAtPosition(
                     childAtPosition(
                         withClassName(`is`("android.widget.LinearLayout")),
