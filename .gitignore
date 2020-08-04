@@ -83,6 +83,4 @@ lint/generated/
 lint/outputs/
 lint/tmp/
 # lint/reports/
-
-*.iml
 .DS_Store

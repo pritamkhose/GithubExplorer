@@ -22,6 +22,10 @@ import com.pritam.githubexplorer.retrofit.rest.ApiInterface
 import com.pritam.githubexplorer.ui.adapter.RecyclerTouchListener
 import com.pritam.githubexplorer.ui.adapter.UserFollowListAdapter
 import com.pritam.githubexplorer.utils.ConnectivityUtils
+import com.pritam.githubexplorer.utils.Constants
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -30,10 +34,9 @@ import kotlin.collections.ArrayList
 
 class UserFollowerFragment : Fragment() {
 
-    private val mtag = UserFollowerFragment::class.java.simpleName
     private lateinit var mBinding: FragmentFollowBinding
+    private val compositeDisposable = CompositeDisposable()
     private var username = ""
-    private val apiService = ApiClient.client!!.create(ApiInterface::class.java)
     private var aListFollow: List<UserFollowResponse> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,7 +59,8 @@ class UserFollowerFragment : Fragment() {
         activity?.title = username.toUpperCase(Locale.ROOT) + " Followers"
 
         //Add a LayoutManager
-        mBinding.recyclerViewFollow.layoutManager = LinearLayoutManager(context, LinearLayout.VERTICAL, false)
+        mBinding.recyclerViewFollow.layoutManager =
+            LinearLayoutManager(context, LinearLayout.VERTICAL, false)
 
         mBinding.recyclerViewFollow.addOnItemTouchListener(
             RecyclerTouchListener(
@@ -79,29 +83,12 @@ class UserFollowerFragment : Fragment() {
 
     private fun fetchFollowers(context: Context) {
         if (ConnectivityUtils.isNetworkAvailable(context)) {
-            val call = apiService.getUserFollowers(username)
-            call.enqueue(object : Callback<List<UserFollowResponse>> {
-                override fun onResponse(
-                    call: Call<List<UserFollowResponse>>,
-                    response: Response<List<UserFollowResponse>>
-                ) {
-                    val aList: List<UserFollowResponse>? = response.body()
-                    if (aList != null && aList.isNotEmpty()) {
-                        aListFollow = aList
-                        mBinding.recyclerViewFollow.adapter = UserFollowListAdapter(aListFollow)
-                    } else {
-                        Snackbar.make(
-                            activity?.window?.decorView?.rootView!!,
-                            R.string.nouser,
-                            Snackbar.LENGTH_LONG
-                        ).show()
-                    }
-                }
-
-                override fun onFailure(call: Call<List<UserFollowResponse>>, t: Throwable) {
-                    Log.e(mtag, t.toString())
-                }
-            })
+            compositeDisposable.add(
+                ApiClient.client.getUserFollowers(username)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(this::handleResults, this::handleError)
+            )
         } else {
             // network is not present then show message
             Snackbar.make(
@@ -115,6 +102,34 @@ class UserFollowerFragment : Fragment() {
         }
     }
 
+    private fun handleResults(aObj: List<UserFollowResponse>) {
+        try {
+            if (aObj.isNotEmpty()) {
+                aListFollow = aObj
+                mBinding.recyclerViewFollow.adapter = UserFollowListAdapter(aListFollow)
+            } else {
+                Snackbar.make(
+                    activity?.window?.decorView?.rootView!!,
+                    R.string.nouser,
+                    Snackbar.LENGTH_LONG
+                ).show()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Snackbar.make(
+                activity?.window?.decorView?.rootView!!,
+                R.string.error,
+                Snackbar.LENGTH_LONG
+            )
+                .show()
+        }
+    }
+
+    private fun handleError(t: Throwable) {
+        Log.e(Constants.APP_TAG, t.toString())
+        Snackbar.make(activity?.window?.decorView?.rootView!!, R.string.error, Snackbar.LENGTH_LONG)
+
+    }
 
     private fun openUserSerachFragment(username: String) {
         val fragment = UsersDetailsFragment()

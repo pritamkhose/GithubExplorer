@@ -16,25 +16,23 @@ import com.pritam.githubexplorer.databinding.FragmentUserDetailsBinding
 import com.pritam.githubexplorer.extensions.replaceFragment
 import com.pritam.githubexplorer.retrofit.model.UserDetailsResponse
 import com.pritam.githubexplorer.retrofit.rest.ApiClient
-import com.pritam.githubexplorer.retrofit.rest.ApiInterface
 import com.pritam.githubexplorer.utils.ConnectivityUtils
 import com.pritam.githubexplorer.utils.Constants
 import com.pritam.githubexplorer.utils.Constants.Companion.GIST_URL
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_user_details.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.util.*
 import java.util.regex.Pattern
 
 
 open class UsersDetailsFragment : Fragment() {
 
-    private val TAG = UsersDetailsFragment::class.java.simpleName
     private var username = ""
-    private val apiService = ApiClient.client!!.create(ApiInterface::class.java)
     private lateinit var userObj: UserDetailsResponse
     private lateinit var mBinding: FragmentUserDetailsBinding
+    private val compositeDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -112,34 +110,12 @@ open class UsersDetailsFragment : Fragment() {
     private fun fetchdata(context: Context) {
         if (ConnectivityUtils.isNetworkAvailable(context)) {
             // network is present so will load updated data
-            val call = apiService.getUserDetails(username)
-            call.enqueue(object : Callback<UserDetailsResponse> {
-                override fun onResponse(
-                    call: Call<UserDetailsResponse>,
-                    response: Response<UserDetailsResponse>
-                ) {
-                    val aObj: UserDetailsResponse? = response.body()
-                    if (aObj !== null) {
-                        try {
-                            userObj = aObj
-                            mBinding.userdetails = aObj
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                        }
-                    } else {
-                        Snackbar.make(
-                            activity?.window?.decorView?.rootView!!,
-                            R.string.error,
-                            Snackbar.LENGTH_LONG
-                        ).show()
-                    }
-                }
-
-                override fun onFailure(call: Call<UserDetailsResponse>, t: Throwable) {
-                    // Log error here since request failed
-                    Log.e(TAG, t.toString())
-                }
-            })
+            compositeDisposable.add(
+                ApiClient.client.getUserDetails(username)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(this::handleResults, this::handleError)
+            )
         } else {
             // network is not present then show message
             Snackbar.make(
@@ -151,6 +127,25 @@ open class UsersDetailsFragment : Fragment() {
                     fetchdata(context)
                 }.show()
         }
+    }
+
+    private fun handleResults(aObj: UserDetailsResponse) {
+        try {
+            userObj = aObj
+            mBinding.userdetails = aObj
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Snackbar.make(
+                activity?.window?.decorView?.rootView!!,
+                R.string.error,
+                Snackbar.LENGTH_LONG
+            ).show()
+        }
+    }
+
+    private fun handleError(t: Throwable) {
+        Log.e(Constants.APP_TAG, t.toString())
+        Snackbar.make(activity?.window?.decorView?.rootView!!, R.string.error, Snackbar.LENGTH_LONG)
     }
 
 

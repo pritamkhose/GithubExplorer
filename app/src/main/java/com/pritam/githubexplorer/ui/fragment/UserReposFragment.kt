@@ -15,13 +15,19 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.pritam.githubexplorer.R
 import com.pritam.githubexplorer.databinding.FragmentUserReposBinding
+import com.pritam.githubexplorer.retrofit.model.UserFollowResponse
 import com.pritam.githubexplorer.retrofit.model.UserReposResponse
 import com.pritam.githubexplorer.retrofit.rest.ApiClient
 import com.pritam.githubexplorer.retrofit.rest.ApiInterface
 import com.pritam.githubexplorer.ui.adapter.EndlessRecyclerOnScrollListener
 import com.pritam.githubexplorer.ui.adapter.RecyclerTouchListener
+import com.pritam.githubexplorer.ui.adapter.UserFollowListAdapter
 import com.pritam.githubexplorer.ui.adapter.UserRepoListAdapter
 import com.pritam.githubexplorer.utils.ConnectivityUtils
+import com.pritam.githubexplorer.utils.Constants
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -31,8 +37,8 @@ import kotlin.collections.ArrayList
 
 open class UserReposFragment : Fragment() {
 
-    private val mtag = UserReposFragment::class.java.simpleName
     private lateinit var mBinding: FragmentUserReposBinding
+    private val compositeDisposable = CompositeDisposable()
     private var aList: ArrayList<UserReposResponse> = ArrayList()
     private var username = ""
     private var pageno = 1
@@ -59,7 +65,8 @@ open class UserReposFragment : Fragment() {
         activity?.title = username.toUpperCase(Locale.ROOT) + " Repositories"
 
         //Add a LayoutManager
-        mBinding.recyclerView.layoutManager = LinearLayoutManager(context, LinearLayout.VERTICAL, false)
+        mBinding.recyclerView.layoutManager =
+            LinearLayoutManager(context, LinearLayout.VERTICAL, false)
 
         mBinding.recyclerView.addOnItemTouchListener(
             RecyclerTouchListener(
@@ -124,45 +131,16 @@ open class UserReposFragment : Fragment() {
 
     private fun fetchdata(context: Context) {
         if (ConnectivityUtils.isNetworkAvailable(context)) {
-            if(!mBinding.swipeRefreshLayout.isRefreshing) {
+            if (!mBinding.swipeRefreshLayout.isRefreshing) {
                 // Show swipe to refresh icon animation
                 mBinding.swipeRefreshLayout.isRefreshing = true
                 // network is present so will load updated data
-                val apiService = ApiClient.client!!.create(ApiInterface::class.java)
-                val call = apiService.getUserRepos(username, "updated", 25, pageno)
-                call.enqueue(object : Callback<ArrayList<UserReposResponse>> {
-                    override fun onResponse(
-                        call: Call<ArrayList<UserReposResponse>>,
-                        response: Response<ArrayList<UserReposResponse>>
-                    ) {
-                        // Hide swipe to refresh icon animation
-                        mBinding.swipeRefreshLayout.isRefreshing = false
-                        val alList: ArrayList<UserReposResponse>? = response.body()
-                        if (alList !== null && alList.size > 0) {
-                            //creating adapter and item adding to adapter of recyclerview
-                            if(pageno == 1){
-                                aList = alList
-                                mBinding.recyclerView.adapter = UserRepoListAdapter(aList)
-                            } else {
-                                aList.addAll(alList)
-                            }
-                            if (aList.size > 0)
-                                (mBinding.recyclerView.adapter as UserRepoListAdapter).notifyDataSetChanged()
-                        } else {
-                            Snackbar.make(
-                                activity?.window?.decorView?.rootView!!,
-                                R.string.nouser,
-                                Snackbar.LENGTH_LONG
-                            ).show()
-                        }
-                    }
-
-                    override fun onFailure(call: Call<ArrayList<UserReposResponse>>, t: Throwable) {
-                        // Log error here since request failed
-                        Log.e(mtag, t.toString())
-                        mBinding.swipeRefreshLayout.isRefreshing = false
-                    }
-                })
+                compositeDisposable.add(
+                    ApiClient.client.getUserRepos(username, "updated", 25, pageno)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(this::handleResults, this::handleError)
+                )
             }
         } else {
             // network is not present then show message
@@ -175,6 +153,44 @@ open class UserReposFragment : Fragment() {
                     fetchdata(context)
                 }.show()
         }
+    }
+
+    private fun handleResults(alList: ArrayList<UserReposResponse>) {
+        // Hide swipe to refresh icon animation
+        mBinding.swipeRefreshLayout.isRefreshing = false
+        try {
+            if (alList !== null && alList.size > 0) {
+                //creating adapter and item adding to adapter of recyclerview
+                if (pageno == 1) {
+                    this.aList = alList
+                    mBinding.recyclerView.adapter = UserRepoListAdapter(aList)
+                } else {
+                    aList.addAll(alList)
+                }
+                if (aList.size > 0)
+                    (mBinding.recyclerView.adapter as UserRepoListAdapter).notifyDataSetChanged()
+            } else {
+                Snackbar.make(
+                    activity?.window?.decorView?.rootView!!,
+                    R.string.nouser,
+                    Snackbar.LENGTH_LONG
+                ).show()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Snackbar.make(
+                activity?.window?.decorView?.rootView!!,
+                R.string.error,
+                Snackbar.LENGTH_LONG
+            ).show()
+        }
+    }
+
+    private fun handleError(t: Throwable) {
+        mBinding.swipeRefreshLayout.isRefreshing = false
+        Log.e(Constants.APP_TAG, t.toString())
+        Snackbar.make(activity?.window?.decorView?.rootView!!, R.string.error, Snackbar.LENGTH_LONG)
+
     }
 
     private fun openCustomTabs(url: String) {

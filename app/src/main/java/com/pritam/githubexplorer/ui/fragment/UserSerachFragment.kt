@@ -19,15 +19,15 @@ import com.pritam.githubexplorer.databinding.FragmentUserSearchBinding
 import com.pritam.githubexplorer.retrofit.model.Item
 import com.pritam.githubexplorer.retrofit.model.UserSerachResponse
 import com.pritam.githubexplorer.retrofit.rest.ApiClient
-import com.pritam.githubexplorer.retrofit.rest.ApiInterface
 import com.pritam.githubexplorer.ui.adapter.EndlessRecyclerOnScrollListener
 import com.pritam.githubexplorer.ui.adapter.RecyclerTouchListener
 import com.pritam.githubexplorer.ui.adapter.UserSerachListAdapter
 import com.pritam.githubexplorer.utils.ConnectivityUtils
-import kotlinx.android.synthetic.main.fragment_user_search.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.pritam.githubexplorer.utils.Constants.Companion.APP_TAG
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
+
 
 class UserSerachFragment : Fragment() {
 
@@ -37,6 +37,7 @@ class UserSerachFragment : Fragment() {
     private var textSearchStr = ""
     private var lastTextSearchStr = "*"
     private var pageno = 1
+    private val compositeDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,37 +62,46 @@ class UserSerachFragment : Fragment() {
 
         // Search enter text
         mBinding.textSearch.setOnEditorActionListener { _, actionId, _ ->
-            if(actionId == EditorInfo.IME_ACTION_DONE){
-                if(mBinding.textSearch.text != null){
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                if (mBinding.textSearch.text != null) {
                     hideKeyboard()
                     textSearchStr = mBinding.textSearch.text.toString()
                     fetchdata(context)
                 } else {
-                    Snackbar.make(activity?.window?.decorView?.rootView!!, R.string.enterusername, Snackbar.LENGTH_LONG).show()
+                    Snackbar.make(
+                        activity?.window?.decorView?.rootView!!,
+                        R.string.enterusername,
+                        Snackbar.LENGTH_LONG
+                    ).show()
                 }
                 true
             } else {
                 false
             }
         }
-        if(textSearchStr.length > 0){
+        if (textSearchStr.length > 0) {
             mBinding.textSearch.setText(textSearchStr)
         }
         // Search box
         // get reference to ImageView
         mBinding.imSearch.setOnClickListener {
             // your code to perform when the user clicks on the ImageView
-            if(mBinding.textSearch.text != null){
+            if (mBinding.textSearch.text != null) {
                 hideKeyboard()
                 textSearchStr = mBinding.textSearch.text.toString()
                 fetchdata(context)
             } else {
-                Snackbar.make(activity?.window?.decorView?.rootView!!, R.string.enterusername, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(
+                    activity?.window?.decorView?.rootView!!,
+                    R.string.enterusername,
+                    Snackbar.LENGTH_LONG
+                ).show()
             }
         }
 
         //Add a LayoutManager
-        mBinding.recyclerView.layoutManager = LinearLayoutManager(context, LinearLayout.VERTICAL, false)
+        mBinding.recyclerView.layoutManager =
+            LinearLayoutManager(context, LinearLayout.VERTICAL, false)
 
         mBinding.recyclerView.addOnItemTouchListener(
             RecyclerTouchListener(
@@ -109,10 +119,10 @@ class UserSerachFragment : Fragment() {
         )
 
         mBinding.recyclerView.addOnScrollListener(object : EndlessRecyclerOnScrollListener() {
-                override fun onLoadMore() {
-                    pageno += 1
-                    fetchdata(context)
-                }
+            override fun onLoadMore() {
+                pageno += 1
+                fetchdata(context)
+            }
         })
 
         mBinding.swipeRefreshLayout.setColorSchemeResources(
@@ -121,7 +131,7 @@ class UserSerachFragment : Fragment() {
             R.color.orange,
             R.color.red
         )
-        mBinding.swipeRefreshLayout.setOnRefreshListener{
+        mBinding.swipeRefreshLayout.setOnRefreshListener {
             pageno = 1
             fetchdata(context)
         }
@@ -132,76 +142,77 @@ class UserSerachFragment : Fragment() {
     }
 
     private fun fetchdata(context: Context) {
-        if(textSearchStr.isEmpty()){
+        if (textSearchStr.isEmpty()) {
             textSearchStr = "android"
         }
-        if(lastTextSearchStr != textSearchStr){
+        if (lastTextSearchStr != textSearchStr) {
             lastTextSearchStr = textSearchStr
             pageno = 1
         }
         Log.d(TAG, pageno.toString())
         if (ConnectivityUtils.isNetworkAvailable(context)) {
-            if(!mBinding.swipeRefreshLayout.isRefreshing) {
+            if (!mBinding.swipeRefreshLayout.isRefreshing) {
                 // Show swipe to refresh icon animation
                 mBinding.swipeRefreshLayout.isRefreshing = true
                 // network is present so will load updated data
-                val apiService = ApiClient.client!!.create(ApiInterface::class.java)
-                val call = apiService.getUserSearch(textSearchStr, pageno)
-                call.enqueue(object : Callback<UserSerachResponse> {
-                    override fun onResponse(
-                        call: Call<UserSerachResponse>,
-                        response: Response<UserSerachResponse>
-                    ) {
-                        // Hide swipe to refresh icon animation
-                        mBinding.swipeRefreshLayout.isRefreshing = false
-                        val aObj: UserSerachResponse? = response.body()
-                        // Log.d(TAG, "Response " + aObj.toString())
-                        if (aObj != null) {
-                            try {
-                                if (aObj.total_count > 0) {
-                                    val alList = aObj.items as ArrayList<Item>
-                                    //creating adapter and item adding to adapter of recyclerview
-                                    if (pageno == 1 ) {
-                                        aList = alList
-                                        recyclerView.adapter = UserSerachListAdapter(aList)
-                                    } else {
-                                        aList.addAll(alList)
-                                        (recyclerView.adapter as UserSerachListAdapter).notifyDataSetChanged()
-                                    }
-                                } else {
-                                    Snackbar.make(
-                                        activity?.window?.decorView?.rootView!!,
-                                        R.string.nouser,
-                                        Snackbar.LENGTH_LONG
-                                    ).show()
-                                }
-                            } catch (e: Exception) {
-                                e.printStackTrace()
-                                Snackbar.make(activity?.window?.decorView?.rootView!!, R.string.error, Snackbar.LENGTH_LONG)
-                                    .show()
-                            }
-                        } else {
-                            Snackbar.make(activity?.window?.decorView?.rootView!!, R.string.error, Snackbar.LENGTH_LONG)
-                                .show()
-                        }
-                    }
-
-                    override fun onFailure(call: Call<UserSerachResponse>, t: Throwable) {
-                        // Log error here since request failed
-                        Log.e(TAG, t.toString())
-                        mBinding.swipeRefreshLayout.isRefreshing = false
-                    }
-                })
+                compositeDisposable.add(
+                    ApiClient.client.getUserSearch(textSearchStr, pageno)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(this::handleResults, this::handleError)
+                )
             }
         } else {
             // network is not present then show message
-            Snackbar.make(activity?.window?.decorView?.rootView!!, R.string.network_error, Snackbar.LENGTH_LONG)
+            Snackbar.make(
+                activity?.window?.decorView?.rootView!!,
+                R.string.network_error,
+                Snackbar.LENGTH_LONG
+            )
                 .setAction("Retry") {
                     fetchdata(context)
                 }.show()
         }
     }
 
+    private fun handleResults(aObj: UserSerachResponse) {
+        // Hide swipe to refresh icon animation
+        mBinding.swipeRefreshLayout.isRefreshing = false
+        try {
+            if (aObj.total_count > 0) {
+                val alList = aObj.items as ArrayList<Item>
+                //creating adapter and item adding to adapter of recyclerview
+                if (pageno == 1) {
+                    aList = alList
+                    mBinding.recyclerView.adapter = UserSerachListAdapter(aList)
+                } else {
+                    aList.addAll(alList)
+                    (mBinding.recyclerView.adapter as UserSerachListAdapter).notifyDataSetChanged()
+                }
+            } else {
+                Snackbar.make(
+                    activity?.window?.decorView?.rootView!!,
+                    R.string.nouser,
+                    Snackbar.LENGTH_LONG
+                ).show()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Snackbar.make(
+                activity?.window?.decorView?.rootView!!,
+                R.string.error,
+                Snackbar.LENGTH_LONG
+            ).show()
+        }
+    }
+
+    private fun handleError(t: Throwable) {
+        // Hide swipe to refresh icon animation
+        mBinding.swipeRefreshLayout.isRefreshing = false
+        Log.e(APP_TAG, t.toString())
+        Snackbar.make(activity?.window?.decorView?.rootView!!, R.string.error, Snackbar.LENGTH_LONG)
+            .show()
+    }
 
     private fun openFragment(username: String) {
         val userDetailFragment = UsersDetailsFragment()
