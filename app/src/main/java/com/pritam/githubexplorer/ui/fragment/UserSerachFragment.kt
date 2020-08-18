@@ -29,7 +29,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
 
-class UserSerachFragment : Fragment() {
+class UserSerachFragment : BaseFragment() {
 
     private val TAG = UserSerachFragment::class.java.simpleName
     private lateinit var mBinding: FragmentUserSearchBinding
@@ -190,28 +190,17 @@ class UserSerachFragment : Fragment() {
                     (mBinding.recyclerView.adapter as UserSerachListAdapter).notifyDataSetChanged()
                 }
             } else {
-                Snackbar.make(
-                    activity?.window?.decorView?.rootView!!,
-                    R.string.nouser,
-                    Snackbar.LENGTH_LONG
-                ).show()
+                showSnackMsg(R.string.nouser)
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            Snackbar.make(
-                activity?.window?.decorView?.rootView!!,
-                R.string.error,
-                Snackbar.LENGTH_LONG
-            ).show()
+            showSnackMsg(R.string.error)
         }
     }
 
-    private fun handleError(t: Throwable) {
+    override fun handleError(t: Throwable) {
         // Hide swipe to refresh icon animation
         mBinding.swipeRefreshLayout.isRefreshing = false
-        Log.e(APP_TAG, t.toString())
-        Snackbar.make(activity?.window?.decorView?.rootView!!, R.string.error, Snackbar.LENGTH_LONG)
-            .show()
     }
 
     private fun openFragment(username: String) {
@@ -225,8 +214,4 @@ class UserSerachFragment : Fragment() {
         fragmentTransaction.commit()
     }
 
-    private fun hideKeyboard() {
-        val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(activity?.window?.decorView?.rootView!!.windowToken, 0)
-    }
 }
