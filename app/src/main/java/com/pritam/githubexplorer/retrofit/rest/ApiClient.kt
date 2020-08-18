@@ -4,6 +4,7 @@ import com.pritam.githubexplorer.utils.Constants
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import okhttp3.OkHttpClient
+import okhttp3.Request
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import java.util.concurrent.TimeUnit
@@ -18,10 +19,15 @@ object ApiClient {
         interceptor.level = HttpLoggingInterceptor.Level.BODY
 
         val client = OkHttpClient.Builder()
-            .addInterceptor(interceptor)
             .connectTimeout(Constants.CONNECTION_TIMEOUT, TimeUnit.SECONDS)
             .writeTimeout(Constants.CONNECTION_TIMEOUT, TimeUnit.SECONDS)
             .readTimeout(Constants.CONNECTION_TIMEOUT, TimeUnit.SECONDS)
+            .addInterceptor { chain ->
+                val newRequest = chain.request().newBuilder()
+                    .addHeader("Content-Type", "application/json; charset=UTF-8")
+                    .build()
+                chain.proceed(newRequest)
+            }
             .build()
 
         return Retrofit.Builder()
