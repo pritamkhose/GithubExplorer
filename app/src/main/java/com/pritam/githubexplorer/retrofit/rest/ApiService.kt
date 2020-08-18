@@ -42,5 +42,5 @@ interface ApiService {
 
     // https://api.github.com/search/repositories?q=topic:android
     @GET("search/repositories")
-    suspend fun getUserSearchDefault(@Query("q") query: String): UserDetailsResponse
+    suspend fun getUserSearchDefault(@Query("q") query: String): UserSerachResponse
 }
