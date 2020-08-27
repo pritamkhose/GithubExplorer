@@ -3,7 +3,6 @@ package com.pritam.githubexplorer.ui.fragment
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,6 +26,7 @@ import com.pritam.githubexplorer.ui.adapter.UserFollowListAdapter
 import com.pritam.githubexplorer.ui.base.ViewModelFactory
 import com.pritam.githubexplorer.ui.viewmodel.UserFollowerViewModel
 import com.pritam.githubexplorer.utils.ConnectivityUtils
+import com.pritam.githubexplorer.utils.LogUtils
 import java.util.*
 
 class UserFollowerFragment : Fragment() {
@@ -120,7 +120,7 @@ class UserFollowerFragment : Fragment() {
                                 R.string.error,
                                 Snackbar.LENGTH_LONG
                             ).show()
-                            Log.d("mTAG", it.message.toString())
+                            LogUtils.debug("mTAG", it.message.toString())
                         }
                         Status.LOADING -> {
                             mBinding.swipeRefreshLayout.isRefreshing = true

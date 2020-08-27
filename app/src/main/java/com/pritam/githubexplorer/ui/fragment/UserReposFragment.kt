@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.LinearLayout
 import androidx.browser.customtabs.CustomTabsIntent
@@ -26,6 +25,7 @@ import com.pritam.githubexplorer.ui.adapter.UserRepoListAdapter
 import com.pritam.githubexplorer.ui.base.ViewModelFactory
 import com.pritam.githubexplorer.ui.viewmodel.UserReposViewModel
 import com.pritam.githubexplorer.utils.ConnectivityUtils
+import com.pritam.githubexplorer.utils.LogUtils
 import java.util.*
 
 
@@ -130,7 +130,7 @@ open class UserReposFragment : Fragment() {
                                 R.string.error,
                                 Snackbar.LENGTH_LONG
                             ).show()
-                            Log.d("mTAG", it.message.toString())
+                            LogUtils.debug("mTAG", it.message.toString())
                         }
                         Status.LOADING -> {
                             mBinding.swipeRefreshLayout.isRefreshing = true

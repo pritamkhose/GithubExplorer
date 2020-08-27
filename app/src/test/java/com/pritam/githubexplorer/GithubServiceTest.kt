@@ -1,7 +1,6 @@
 package com.pritam.githubexplorer
 
 import com.pritam.githubexplorer.retrofit.rest.ApiService
-import com.pritam.githubexplorer.utils.Constants
 import kotlinx.coroutines.runBlocking
 import org.junit.*
 import org.junit.Assert.*
@@ -20,7 +19,7 @@ class GithubServiceTest {
     fun createService() {
         // call the api
         service = Retrofit.Builder()
-            .baseUrl(Constants.BASE_URL)
+            .baseUrl(BuildConfig.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(ApiService::class.java)
@@ -80,7 +79,7 @@ class GithubServiceTest {
         assertNotEquals(response.size, 0)
         assertNotEquals(response[0].login, null)
     }
-    
+
 
     @Test
     fun `User Search Default repositories correct` () = runBlocking {

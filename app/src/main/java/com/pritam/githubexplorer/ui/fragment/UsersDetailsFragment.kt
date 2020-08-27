@@ -10,6 +10,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.snackbar.Snackbar
+import com.pritam.githubexplorer.BuildConfig
 import com.pritam.githubexplorer.R
 import com.pritam.githubexplorer.databinding.FragmentUserDetailsBinding
 import com.pritam.githubexplorer.extensions.replaceFragment
@@ -21,7 +22,6 @@ import com.pritam.githubexplorer.ui.base.ViewModelFactory
 import com.pritam.githubexplorer.ui.viewmodel.UserDetailsViewModel
 import com.pritam.githubexplorer.utils.ConnectivityUtils
 import com.pritam.githubexplorer.utils.Constants
-import com.pritam.githubexplorer.utils.Constants.Companion.GIST_URL
 import kotlinx.android.synthetic.main.fragment_user_details.*
 import java.util.*
 import java.util.regex.Pattern
@@ -78,7 +78,7 @@ class UsersDetailsFragment : Fragment() {
 
     fun gist() {
         if (mBinding.userdetails?.public_gists!! > 0) {
-            openCustomTabs(GIST_URL + username)
+            openCustomTabs(BuildConfig.GIST_URL + username)
         }
     }
 

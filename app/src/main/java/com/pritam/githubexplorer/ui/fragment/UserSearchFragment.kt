@@ -29,6 +29,7 @@ import com.pritam.githubexplorer.retrofit.rest.ApiHelper
 import com.pritam.githubexplorer.ui.adapter.EndlessRecyclerOnScrollListener
 import com.pritam.githubexplorer.ui.adapter.UserSearchListAdapter
 import com.pritam.githubexplorer.ui.viewmodel.UserSearchViewModel
+import com.pritam.githubexplorer.utils.LogUtils
 
 class UserSearchFragment : Fragment() {
 
@@ -140,7 +141,7 @@ class UserSearchFragment : Fragment() {
         mBinding.recyclerView.addOnScrollListener(object : EndlessRecyclerOnScrollListener() {
             override fun onLoadMore() {
                 pageno += 1
-                Log.d(mTAG, "onLoadMore $pageno")
+                LogUtils.debug(mTAG, "onLoadMore $pageno")
                 setupObservers()
             }
         })
@@ -166,7 +167,7 @@ class UserSearchFragment : Fragment() {
             lastTextSearchStr = textSearchStr
             pageno = 1
         }
-        Log.d(mTAG, pageno.toString())
+        LogUtils.debug(mTAG, pageno.toString())
         if (activity?.baseContext?.let { ConnectivityUtils.isNetworkAvailable(it) }!!) {
             viewModel.getUsers(textSearchStr, pageno).observe(viewLifecycleOwner, Observer {
                 it?.let { resource ->
@@ -176,13 +177,16 @@ class UserSearchFragment : Fragment() {
                             resource.data?.let { users -> retrieveList(users) }
                         }
                         Status.ERROR -> {
+                            if (pageno > 1){
+                                pageno-= 1
+                            }
                             mBinding.swipeRefreshLayout.isRefreshing = false
                             Snackbar.make(
                                 activity?.window?.decorView?.rootView!!,
                                 R.string.error,
                                 Snackbar.LENGTH_LONG
                             ).show()
-                            Log.d(mTAG, it.message.toString())
+                            LogUtils.debug(mTAG, it.message.toString())
                         }
                         Status.LOADING -> {
                             mBinding.swipeRefreshLayout.isRefreshing = true
