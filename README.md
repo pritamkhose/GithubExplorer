@@ -1,4 +1,4 @@
-# GithubExplorer 
+# GithubExplorer
 Github Explorer Android App using Github Rest API web services 
 
 Introduction
