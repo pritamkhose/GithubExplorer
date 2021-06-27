@@ -26,15 +26,21 @@ object ApiClient {
         } else {
             interceptor.level = HttpLoggingInterceptor.Level.NONE
         }
+        var ua = System.getProperty("http.agent")
+        ua = if(ua !== null) {
+            ua.toString()
+        } else {
+            ""
+        }
 
         val okHttpClient: OkHttpClient = OkHttpClient.Builder()
-            .addInterceptor(interceptor)
             .addInterceptor(object : Interceptor {
                 @Throws(IOException::class)
                 override fun intercept(chain: Interceptor.Chain): Response {
                     val original: Request = chain.request()
                     val request: Request = original.newBuilder()
                         .header("Content-Type", "application/json; charset=utf-8")
+                        .header("User-Agent", ua)
                         .build()
 
                     val response: Response = chain.proceed(request)
@@ -52,6 +58,7 @@ object ApiClient {
                     return response
                 }
             })
+            .addInterceptor(interceptor)
             .connectTimeout(Constants.CONNECTION_TIMEOUT, TimeUnit.SECONDS)
             .writeTimeout(Constants.CONNECTION_TIMEOUT, TimeUnit.SECONDS)
             .readTimeout(Constants.CONNECTION_TIMEOUT, TimeUnit.SECONDS)

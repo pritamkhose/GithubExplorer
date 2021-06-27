@@ -8,6 +8,7 @@ import com.squareup.picasso.Picasso
 
 object PicassoBindingAdapters {
 
+    @JvmStatic
     @BindingAdapter("imageResource")
     fun setImageResource(view: ImageView, imageUrl: Int) {
         Picasso.get()
@@ -16,7 +17,7 @@ object PicassoBindingAdapters {
             .into(view)
     }
 
-
+    @JvmStatic
     @BindingAdapter("imageResource")
     fun setImageResource(view: ImageView, imageUrl: String?) {
 
