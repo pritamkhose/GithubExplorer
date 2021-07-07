@@ -45,19 +45,19 @@ class GithubServiceTest {
         mockWebServer.shutdown()
     }
 
-    @Test
-    fun `User Details 1 correct`() = runBlocking {
-        enqueueResponse("users-pritamkhose.json")
-        val request = mockWebServer.takeRequest()
-        println(request.toString())
-
-        val response = service.getUserDetails(testUserName)
+//    @Test
+//    fun `User Details 1 correct`() = runBlocking {
+//        enqueueResponse("users-pritamkhose.json")
+//        val request = mockWebServer.takeRequest()
+//        println(request.toString())
+//
+//        val response = service.getUserDetails(testUserName)
 //        // verify the response is OK
 //        println(response)
 //        assertNotEquals(response, null)
 //        assertNotEquals(response, "")
 //        assertEquals(response.name, "Pritam Khose")
-    }
+//    }
 
     @Test
     fun `User Details correct` () = runBlocking {
