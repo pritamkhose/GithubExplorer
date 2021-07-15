@@ -47,7 +47,6 @@ open class UserReposFragment : Fragment() {
         setupViewModel()
     }
 
-    @SuppressLint("WrongConstant")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -72,7 +71,7 @@ open class UserReposFragment : Fragment() {
     @SuppressLint("WrongConstant")
     private fun setupUI() {
         val context = activity as Context
-        activity?.title = username.toUpperCase(Locale.ROOT) + " Repositories"
+        activity?.title = username.uppercase(Locale.ROOT) + " Repositories"
 
         //Connect adapter with recyclerView
         adapter = UserRepoListAdapter(arrayListOf())

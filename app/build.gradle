@@ -1,17 +1,16 @@
-apply plugin: 'com.android.application'
-
-apply plugin: 'kotlin-android'
-
-apply plugin: 'kotlin-android-extensions'
-
-apply plugin: 'kotlin-kapt'
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
+}
 
 android {
     // Sdk and tools
     compileSdkVersion 30
     defaultConfig {
         applicationId "com.pritam.githubexplorer"
-        minSdkVersion 16
+        minSdkVersion 23
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -31,7 +30,8 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     buildFeatures {
-        dataBinding = true
+        dataBinding true
+//        viewBinding = true
     }
 
     packagingOptions {
@@ -74,7 +74,7 @@ dependencies {
     implementation "androidx.core:core-ktx:1.6.0"
     implementation "androidx.constraintlayout:constraintlayout:2.0.4"
     implementation "com.google.android.material:material:1.4.0"
-
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
     implementation group: 'androidx.recyclerview', name: 'recyclerview', version: "1.2.1"
 
     // navigation components
@@ -93,13 +93,17 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
     // kapt components
     kapt "com.android.databinding:compiler:3.1.4"
 
+    // hilt
+    def hilt_version = "2.37"
+    implementation "com.google.dagger:hilt-android:$hilt_version"
+    kapt "com.google.dagger:hilt-compiler:$hilt_version"
+
     // GSON
-    implementation "com.google.code.gson:gson:2.8.5"
+    implementation "com.google.code.gson:gson:2.8.6"
 
     // Retrofit
     implementation "com.squareup.retrofit2:retrofit:2.9.0"

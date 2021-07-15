@@ -38,13 +38,11 @@
                     android:id="@+id/im_search"
                     android:layout_width="45dp"
                     android:layout_height="45dp"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
                     android:layout_marginStart="-55dp"
-                    android:layout_marginLeft="-55dp"
                     android:layout_marginTop="5dp"
                     android:adjustViewBounds="true"
                     android:scaleType="fitXY"
+                    android:contentDescription="@{String.format(@string/search, @string/accessibility_button)}"
                     android:src="@mipmap/search80" />
 
             </LinearLayout>

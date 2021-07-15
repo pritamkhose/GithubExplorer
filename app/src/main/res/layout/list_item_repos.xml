@@ -8,127 +8,130 @@
         <import type="com.pritam.githubexplorer.utils.databinding.PicassoBindingAdapters" />
 
         <variable
-                name="user"
-                type="com.pritam.githubexplorer.retrofit.model.UserReposResponse" />
+            name="user"
+            type="com.pritam.githubexplorer.retrofit.model.UserReposResponse" />
     </data>
 
     <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
 
         <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp">
 
             <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
-                    android:orientation="vertical">
+                    android:text="@{user.name}"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                    android:textColor="@android:color/holo_blue_dark"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:visibility="@{user.name.length() > 1 ? View.VISIBLE : View.GONE}"
+                    android:accessibilityHeading="true"/>
 
                 <TextView
-                        android:id="@+id/tv_name"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="5dp"
-                        android:text="@{user.name}"
-                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-                        android:textColor="@android:color/holo_blue_dark"
-                        android:textSize="22sp"
-                        android:textStyle="bold"
-                        android:visibility="@{user.name.length() > 1 ? View.VISIBLE : View.GONE}" />
-
-                <TextView
-                        android:id="@+id/tv_description"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginEnd="5dp"
-                        android:layout_marginRight="5dp"
-                        android:layout_marginBottom="5dp"
-                        android:text="@{user.description}"
-                        android:textColor="@android:color/black"
-                        android:textSize="18sp" />
+                    android:id="@+id/tv_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:text="@{user.description}"
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp" />
 
                 <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
                     <TextView
-                            android:id="@+id/tv_language"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginLeft="10dp"
-                            android:layout_marginEnd="5dp"
-                            android:layout_marginRight="5dp"
-                            android:layout_weight="1"
-                            android:text="@{user.language}"
-                            android:textColor="@android:color/holo_blue_dark"
-                            android:textSize="18sp"
-                            android:visibility="@{user.language.length() > 1 ? View.VISIBLE : View.GONE}" />
+                        android:id="@+id/tv_language"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_weight="1"
+                        android:text="@{user.language}"
+                        android:hint="@string/accessibility_language"
+                        android:textColor="@android:color/holo_blue_dark"
+                        android:textSize="18sp"
+                        android:visibility="@{user.language.length() > 1 ? View.VISIBLE : View.GONE}" />
 
                     <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.25"
-                            android:orientation="horizontal">
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.25"
+                        android:contentDescription="@{@string/accessibility_star(user.stargazers_count)}"
+                        android:focusable="true"
+                        android:orientation="horizontal">
 
                         <ImageView
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:layout_marginLeft="5dp"
-                                android:layout_marginRight="5dp"
-                                android:adjustViewBounds="true"
-                                android:contentDescription="@string/image"
-                                android:scaleType="fitXY"
-                                android:src="@mipmap/star80" />
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="5dp"
+                            android:adjustViewBounds="true"
+                            android:importantForAccessibility="no"
+                            android:scaleType="fitXY"
+                            android:src="@mipmap/star80" />
 
                         <TextView
-                                android:id="@+id/tv_stargazers_count"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginLeft="5dp"
-                                android:layout_marginRight="5dp"
-                                android:layout_marginBottom="5dp"
-                                android:text="@{String.valueOf(user.stargazers_count)}"
-                                android:textColor="@android:color/black"
-                                android:textSize="20sp" />
+                            android:id="@+id/tv_stargazers_count"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="5dp"
+                            android:layout_marginBottom="5dp"
+                            android:importantForAccessibility="no"
+                            android:text="@{String.valueOf(user.stargazers_count)}"
+                            android:textColor="@android:color/black"
+                            android:textSize="20sp" />
                     </LinearLayout>
 
                     <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.25"
-                            android:orientation="horizontal">
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.25"
+                        android:contentDescription="@{@string/accessibility_fork(user.forks_count)}"
+                        android:focusable="true"
+                        android:orientation="horizontal">
 
                         <ImageView
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:layout_marginStart="25dp"
-                                android:layout_marginLeft="25dp"
-                                android:layout_marginEnd="5dp"
-                                android:layout_marginRight="5dp"
-                                android:adjustViewBounds="true"
-                                android:contentDescription="@string/image"
-                                android:scaleType="fitXY"
-                                android:src="@mipmap/codefork96" />
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_marginStart="25dp"
+                            android:layout_marginEnd="5dp"
+                            android:adjustViewBounds="true"
+                            android:contentDescription="@string/image"
+                            android:importantForAccessibility="no"
+                            android:scaleType="fitXY"
+                            android:src="@mipmap/codefork96" />
 
                         <TextView
-                                android:id="@+id/tv_forks_count"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginLeft="5dp"
-                                android:layout_marginRight="5dp"
-                                android:layout_marginBottom="5dp"
-                                android:text="@{String.valueOf(user.forks_count)}"
-                                android:textColor="@android:color/black"
-                                android:textSize="20sp" />
+                            android:id="@+id/tv_forks_count"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="5dp"
+                            android:layout_marginBottom="5dp"
+                            android:importantForAccessibility="no"
+                            android:text="@{String.valueOf(user.forks_count)}"
+                            android:textColor="@android:color/black"
+                            android:textSize="20sp" />
 
                     </LinearLayout>
 

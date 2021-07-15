@@ -10,7 +10,6 @@ import android.widget.LinearLayout
 import androidx.annotation.Nullable
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
@@ -47,7 +46,7 @@ class UserFollowerFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, @Nullable container: ViewGroup?,
         @Nullable savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Define the listener for binding
         mBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_follow, container, false)
@@ -68,7 +67,7 @@ class UserFollowerFragment : Fragment() {
     @SuppressLint("WrongConstant")
     private fun setupUI() {
         val context = activity as Context
-        activity?.title = username.toUpperCase(Locale.ROOT) + " Followers"
+        activity?.title = username.uppercase(Locale.ROOT) + " Followers"
 
         //Connect adapter with recyclerView
         adapter = UserFollowListAdapter(arrayListOf())
@@ -106,7 +105,7 @@ class UserFollowerFragment : Fragment() {
 
     private fun setupObservers() {
         if (activity?.baseContext?.let { ConnectivityUtils.isNetworkAvailable(it) }!!) {
-            viewModel.getUserFollower(username).observe(viewLifecycleOwner, Observer {
+            viewModel.getUserFollower(username).observe(viewLifecycleOwner, {
                 it?.let { resource ->
                     when (resource.status) {
                         Status.SUCCESS -> {

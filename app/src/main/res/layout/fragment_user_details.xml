@@ -71,7 +71,7 @@
                                     android:adjustViewBounds="true"
                                     android:scaleType="fitXY"
                                     app:imageResource="@{userdetails.avatar_url}"
-                                    tools:ignore="ContentDescription" />
+                                    android:contentDescription="@{String.format(@string/accessibility_image, userdetails.name)}" />
 
 
                                 <LinearLayout
@@ -97,7 +97,6 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:layout_marginStart="5dp"
-                                        android:layout_marginLeft="5dp"
                                         android:layout_marginBottom="5dp"
                                         android:text="@{userdetails.bio}"
                                         android:textColor="@android:color/black"
@@ -109,7 +108,6 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:layout_marginStart="5dp"
-                                        android:layout_marginLeft="5dp"
                                         android:layout_marginBottom="5dp"
                                         android:text="@{userdetails.location}"
                                         android:textColor="@android:color/black"
@@ -134,7 +132,8 @@
                                     android:layout_marginRight="5dp"
                                     android:adjustViewBounds="true"
                                     android:scaleType="fitXY"
-                                    android:src="@mipmap/email96" />
+                                    android:src="@mipmap/email96"
+                                    android:importantForAccessibility="no"/>
 
                                 <TextView
                                     android:id="@+id/tv_email"
@@ -164,7 +163,8 @@
                                     android:layout_marginRight="5dp"
                                     android:adjustViewBounds="true"
                                     android:scaleType="fitXY"
-                                    android:src="@mipmap/info80" />
+                                    android:src="@mipmap/info80"
+                                    android:importantForAccessibility="no"/>
 
                                 <TextView
                                     android:id="@+id/tv_blog"
@@ -190,13 +190,14 @@
                                     android:layout_marginRight="5dp"
                                     android:adjustViewBounds="true"
                                     android:scaleType="fitXY"
-                                    android:src="@mipmap/create80" />
+                                    android:src="@mipmap/create80"
+                                    android:importantForAccessibility="no"/>
 
                                 <TextView
                                     android:id="@+id/tv_created_at"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:text="@{StringUtil.stringtoDateFormat(@string/joinedAt ,userdetails.created_at)}"
+                                    android:text="@{StringUtil.stringDateFormat(@string/joinedAt ,userdetails.created_at)}"
                                     android:textColor="@android:color/black"
                                     android:textSize="18sp" />
                             </LinearLayout>
@@ -215,13 +216,14 @@
                                     android:layout_marginRight="5dp"
                                     android:adjustViewBounds="true"
                                     android:scaleType="fitXY"
-                                    android:src="@mipmap/clock80" />
+                                    android:src="@mipmap/clock80"
+                                    android:importantForAccessibility="no"/>
 
                                 <TextView
                                     android:id="@+id/tv_updated_at"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:text="@{StringUtil.stringtoDateFormat(@string/updatedAt, userdetails.updated_at)}"
+                                    android:text="@{StringUtil.stringDateFormat(@string/updatedAt, userdetails.updated_at)}"
                                     android:textColor="@android:color/black"
                                     android:textSize="18sp" />
                             </LinearLayout>
@@ -290,7 +292,8 @@
                                                 android:layout_marginRight="5dp"
                                                 android:adjustViewBounds="true"
                                                 android:scaleType="fitXY"
-                                                android:src="@mipmap/adduser80" />
+                                                android:src="@mipmap/adduser80"
+                                                android:importantForAccessibility="no"/>
 
                                             <TextView
                                                 android:layout_width="wrap_content"
@@ -357,7 +360,8 @@
                                                 android:layout_marginRight="5dp"
                                                 android:adjustViewBounds="true"
                                                 android:scaleType="fitXY"
-                                                android:src="@mipmap/checkeduser80" />
+                                                android:src="@mipmap/checkeduser80"
+                                                android:importantForAccessibility="no"/>
 
                                             <TextView
                                                 android:layout_width="match_parent"
@@ -427,7 +431,8 @@
                                                 android:layout_marginRight="5dp"
                                                 android:adjustViewBounds="true"
                                                 android:scaleType="fitXY"
-                                                android:src="@mipmap/code80" />
+                                                android:src="@mipmap/code80"
+                                                android:importantForAccessibility="no"/>
 
                                             <TextView
                                                 android:layout_width="match_parent"
@@ -491,7 +496,8 @@
                                                 android:layout_marginRight="5dp"
                                                 android:adjustViewBounds="true"
                                                 android:scaleType="fitXY"
-                                                android:src="@mipmap/repository80" />
+                                                android:src="@mipmap/repository80"
+                                                android:importantForAccessibility="no" />
 
                                             <TextView
                                                 android:layout_width="match_parent"

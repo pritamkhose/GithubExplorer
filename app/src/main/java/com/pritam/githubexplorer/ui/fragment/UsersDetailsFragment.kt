@@ -22,7 +22,6 @@ import com.pritam.githubexplorer.ui.base.ViewModelFactory
 import com.pritam.githubexplorer.ui.viewmodel.UserDetailsViewModel
 import com.pritam.githubexplorer.utils.ConnectivityUtils
 import com.pritam.githubexplorer.utils.Constants
-import kotlinx.android.synthetic.main.fragment_user_details.*
 import java.util.*
 import java.util.regex.Pattern
 
@@ -46,7 +45,7 @@ class UsersDetailsFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, @Nullable container: ViewGroup?,
         @Nullable savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Define the listener for binding
         mBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_user_details, container, false)
@@ -114,7 +113,7 @@ class UsersDetailsFragment : Fragment() {
     }
 
     private fun setupUI() {
-        activity?.title = username.toUpperCase(Locale.ROOT)
+        activity?.title = username.uppercase(Locale.ROOT)
 
         mBinding.swipeRefreshLayout.setColorSchemeResources(
             R.color.blue,
@@ -130,7 +129,7 @@ class UsersDetailsFragment : Fragment() {
     private fun setupObservers() {
         if (activity?.baseContext?.let { ConnectivityUtils.isNetworkAvailable(it) }!!) {
             viewModel.getUserDetails(username)
-                .observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+                .observe(viewLifecycleOwner, {
                     it?.let { resource ->
                         when (resource.status) {
                             Status.SUCCESS -> {
@@ -185,7 +184,7 @@ class UsersDetailsFragment : Fragment() {
     }
 
     private fun sendEmail() {
-        val email = tv_email.text.toString()
+        val email = mBinding.tvEmail.text.toString()
         if (email.length > 6 && isEmailValid(email)) {
             val intent = Intent(Intent.ACTION_SEND)
             intent.type = "text/html"

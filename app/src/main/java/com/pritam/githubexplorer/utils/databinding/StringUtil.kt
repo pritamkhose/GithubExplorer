@@ -3,14 +3,13 @@ package com.pritam.githubexplorer.utils.databinding
 import java.text.SimpleDateFormat
 import java.util.*
 
-class StringUtilKotlin {
+class StringUtil {
 
-    companion object
-    {
+    companion object {
 
         @JvmStatic
-        fun stringtoDateFormat(info: String?, dates: String): String {
-            var info = info
+        fun stringDateFormat(info: String, dates: String?) : String {
+
             val DATE_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'" //2019-07-14T06:56:42Z
             val sdf = SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH)
             var dateStr = ""
@@ -22,12 +21,13 @@ class StringUtilKotlin {
                 e.printStackTrace()
             }
 
-            info = if (dateStr !== "" && info != null && info.isNotEmpty()) {
+            var infoTemp = info
+            infoTemp = if (dateStr !== "" && infoTemp.isNotEmpty()) {
                 "$info "
             } else {
                 ""
             }
-            return info + dateStr
+            return infoTemp + dateStr
         }
 
     }

@@ -70,7 +70,7 @@ class UserFollowingFragment : Fragment() {
     @SuppressLint("WrongConstant")
     private fun setupUI() {
         val context = activity as Context
-        activity?.title = username.toUpperCase(Locale.ROOT) + " Following"
+        activity?.title = username.uppercase(Locale.ROOT) + " Following"
 
         //Connect adapter with recyclerView
         adapter = UserFollowListAdapter(arrayListOf())

@@ -21,4 +21,12 @@
     <string name="repositories">Repositories</string>
     <string name="image">image</string>
     <string name="search">Search</string>
+
+<!--    accessibility string-->
+    <string name="accessibility_image">Image of %s</string>
+    <string name="accessibility_button"> button</string>
+    <string name="accessibility_star">Repositories has %s stars</string>
+    <string name="accessibility_fork">Repositories has %s forks</string>
+    <string name="accessibility_language"> language</string>
+
 </resources>
