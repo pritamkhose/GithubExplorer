@@ -14,7 +14,7 @@ This project uses the Gradle build system. To build this project, use the
 
 Github Documentation
 ---------
-The official [Github Documentation REST API v3][10] in details.
+The official [Github Documentation REST API v3](https://developer.github.com/v3/) in details.
 
 Screenshots
 -----------
@@ -28,21 +28,14 @@ Screenshots
 Libraries Used
 --------------
 * Android
-  * [AppCompat][11] - Degrade gracefully on older versions of Android.
-  * [Android Kotlin][12] - Write more concise, idiomatic Kotlin code.
-  * [Test][13] - An Android testing framework for unit and runtime UI tests.
+  * [AppCompat](https://developer.android.com/jetpack/androidx) - Degrade gracefully on older versions of Android.
+  * [Android Kotlin](https://developer.android.com/kotlin) - Write more concise, idiomatic Kotlin code.
+  * [Test](https://developer.android.com/training/testing/) - An Android testing framework for unit and runtime UI tests.
 * Third party
-  * [Retrofit][21] to consume JSON data via HTTP REST client
-  * [Picasso][22] for image loading
-  * [Custom Tabs][23] for launching URLs in our android applications
-  
-[10]: https://developer.github.com/v3/
-[11]: https://developer.android.com/jetpack/androidx
-[12]: https://developer.android.com/kotlin
-[13]: https://developer.android.com/training/testing/
-[21]: https://square.github.io/retrofit/
-[22]: https://square.github.io/picasso/
-[23]: https://developer.chrome.com/multidevice/android/customtabs
+  * [Retrofit](https://square.github.io/retrofit/) to consume JSON data via HTTP REST client
+  * [Picasso](https://square.github.io/picasso/) for image loading
+  * [Custom Tabs](https://developer.chrome.com/multidevice/android/customtabs) for launching URLs in our android applications
+  * [Multidex](https://developer.android.com/studio/build/multidex) for Enable multidex for apps with over 64K methods
 
 Android Studio IDE setup
 ------------------------
