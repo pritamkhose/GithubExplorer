@@ -9,22 +9,18 @@ import androidx.recyclerview.widget.RecyclerView
 class RecyclerTouchListener(context: Context, recyclerView: RecyclerView, private val clickListener: ClickListener?) :
     RecyclerView.OnItemTouchListener {
 
-    private val gestureDetector: GestureDetector
+    private val gestureDetector: GestureDetector = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
+        override fun onSingleTapUp(e: MotionEvent): Boolean {
+            return true
+        }
 
-    init {
-        gestureDetector = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
-            override fun onSingleTapUp(e: MotionEvent): Boolean {
-                return true
+        override fun onLongPress(e: MotionEvent) {
+            val child = recyclerView.findChildViewUnder(e.x, e.y)
+            if (child != null && clickListener != null) {
+                clickListener.onLongClick(child, recyclerView.getChildAdapterPosition(child))
             }
-
-            override fun onLongPress(e: MotionEvent) {
-                val child = recyclerView.findChildViewUnder(e.x, e.y)
-                if (child != null && clickListener != null) {
-                    clickListener.onLongClick(child, recyclerView.getChildAdapterPosition(child))
-                }
-            }
-        })
-    }
+        }
+    })
 
     override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
 

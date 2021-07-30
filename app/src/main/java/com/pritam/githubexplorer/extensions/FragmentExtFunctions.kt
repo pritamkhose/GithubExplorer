@@ -19,7 +19,7 @@ inline fun FragmentManager.inTransaction(func: FragmentTransaction.() -> Unit) {
 
 // https://medium.com/@niazi.abdulaziz/playing-with-kotlin-extensions-2-the-fragment-manager-class-f0006c451379
 // https://github.com/mgarciaguerrero/safe-android-fragments
-inline fun Fragment.replaceFragment(fragment: Fragment, frameId: Int) {
+fun Fragment.replaceFragment(fragment: Fragment, frameId: Int) {
     fragmentManager!!.inTransaction {
         replace(frameId, fragment, fragment.javaClass.simpleName)
         addToBackStack(null)

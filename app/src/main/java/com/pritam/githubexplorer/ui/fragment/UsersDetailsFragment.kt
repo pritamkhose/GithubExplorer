@@ -1,29 +1,21 @@
 package com.pritam.githubexplorer.ui.fragment
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.*
 import androidx.annotation.Nullable
-import androidx.browser.customtabs.CustomTabsIntent
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
-import com.pritam.githubexplorer.BuildConfig
 import com.pritam.githubexplorer.R
 import com.pritam.githubexplorer.databinding.FragmentUserDetailsBinding
-import com.pritam.githubexplorer.extensions.replaceFragment
 import com.pritam.githubexplorer.retrofit.model.Status
 import com.pritam.githubexplorer.retrofit.model.UserDetailsResponse
 import com.pritam.githubexplorer.retrofit.rest.ApiClient
 import com.pritam.githubexplorer.retrofit.rest.ApiHelper
 import com.pritam.githubexplorer.ui.base.ViewModelFactory
 import com.pritam.githubexplorer.ui.viewmodel.UserDetailsViewModel
-import com.pritam.githubexplorer.utils.ConnectivityUtils
-import com.pritam.githubexplorer.utils.Constants
-import java.util.*
-import java.util.regex.Pattern
+import com.pritam.githubexplorer.utils.*
 
 
 class UsersDetailsFragment : Fragment() {
@@ -38,7 +30,10 @@ class UsersDetailsFragment : Fragment() {
         arguments?.let {
             username = it.getString("username", "pritamkhose")
         }
-        setupViewModel()
+        viewModel = ViewModelProvider(
+            this,
+            ViewModelFactory(ApiHelper(ApiClient.apiService))
+        ).get(UserDetailsViewModel::class.java)
     }
 
     @Nullable
@@ -59,25 +54,25 @@ class UsersDetailsFragment : Fragment() {
 
     fun followers() {
         if (mBinding.userdetails?.followers!! > 0) {
-            openFragment(UserFollowerFragment())
+            openFragment(UserFollowerFragment(), username)
         }
     }
 
     fun following() {
         if (mBinding.userdetails?.following!! > 0) {
-            openFragment(UserFollowingFragment())
+            openFragment(UserFollowingFragment(), username)
         }
     }
 
     fun repos() {
         if (mBinding.userdetails?.public_repos!! > 0) {
-            openFragment(UserReposFragment())
+            openFragment(UserReposFragment(), username)
         }
     }
 
     fun gist() {
         if (mBinding.userdetails?.public_gists!! > 0) {
-            openCustomTabs(BuildConfig.GIST_URL + username)
+            openFragment(UserGistFragment(), username)
         }
     }
 
@@ -86,7 +81,7 @@ class UsersDetailsFragment : Fragment() {
     }
 
     fun onClickEmail() {
-        sendEmail()
+        sendEmail(mBinding.tvEmail.text.toString(), username)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -98,22 +93,15 @@ class UsersDetailsFragment : Fragment() {
         // Handle item selection
         return when (item.itemId) {
             R.id.action_share -> {
-                shareData()
+                shareData(username, false)
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
     }
 
-    private fun setupViewModel() {
-        viewModel = ViewModelProviders.of(
-            this,
-            ViewModelFactory(ApiHelper(ApiClient.apiService))
-        ).get(UserDetailsViewModel::class.java)
-    }
-
     private fun setupUI() {
-        activity?.title = username.uppercase(Locale.ROOT)
+        activity?.title = username
 
         mBinding.swipeRefreshLayout.setColorSchemeResources(
             R.color.blue,
@@ -127,7 +115,7 @@ class UsersDetailsFragment : Fragment() {
     }
 
     private fun setupObservers() {
-        if (activity?.baseContext?.let { ConnectivityUtils.isNetworkAvailable(it) }!!) {
+        if (activity?.baseContext?.let { isNetworkAvailable() }!!) {
             viewModel.getUserDetails(username)
                 .observe(viewLifecycleOwner, {
                     it?.let { resource ->
@@ -138,11 +126,7 @@ class UsersDetailsFragment : Fragment() {
                             }
                             Status.ERROR -> {
                                 mBinding.swipeRefreshLayout.isRefreshing = false
-                                Snackbar.make(
-                                    activity?.window?.decorView?.rootView!!,
-                                    R.string.error,
-                                    Snackbar.LENGTH_LONG
-                                ).show()
+                                snackBarError()
                             }
                             Status.LOADING -> {
                                 mBinding.swipeRefreshLayout.isRefreshing = true
@@ -167,56 +151,8 @@ class UsersDetailsFragment : Fragment() {
             mBinding.userdetails = users
         } catch (e: Exception) {
             e.printStackTrace()
-            Snackbar.make(
-                activity?.window?.decorView?.rootView!!,
-                R.string.error,
-                Snackbar.LENGTH_LONG
-            ).show()
+            snackBarError()
         }
-    }
-
-    private fun openCustomTabs(url: String) {
-        if (url.length > 6 && url.contains("http")) {
-            val builder = CustomTabsIntent.Builder()
-            val customTabsIntent = builder.build()
-            context?.let { customTabsIntent.launchUrl(it, Uri.parse(url)) }
-        }
-    }
-
-    private fun sendEmail() {
-        val email = mBinding.tvEmail.text.toString()
-        if (email.length > 6 && isEmailValid(email)) {
-            val intent = Intent(Intent.ACTION_SEND)
-            intent.type = "text/html"
-            intent.putExtra(Intent.EXTRA_EMAIL, email)
-            intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name))
-            intent.putExtra(Intent.EXTRA_TEXT, "Hi $username,\n\nThanks & Regards,\n\n")
-            startActivity(Intent.createChooser(intent, "Send Email!"))
-        }
-    }
-
-    fun isEmailValid(email: String): Boolean {
-        val emailRegx = Pattern.compile(
-            Constants.EMAIL_VERIFICATION,
-            Pattern.CASE_INSENSITIVE
-        )
-        return emailRegx.matcher(email).matches()
-    }
-
-    // Add data to the intent, the receiving app will decide
-    private fun shareData() {
-        val share = Intent(Intent.ACTION_SEND)
-        share.type = "text/plain"
-        share.putExtra(Intent.EXTRA_SUBJECT, "Share $username link!")
-        share.putExtra(Intent.EXTRA_TEXT, getString(R.string.giturl) + username)
-        startActivity(Intent.createChooser(share, "Share $username link!"))
-    }
-
-    private fun openFragment(fragment: Fragment) {
-        val args = Bundle()
-        args.putString("username", username)
-        fragment.arguments = args
-        replaceFragment(fragment, R.id.fragment_container)
     }
 }
 

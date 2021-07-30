@@ -2,19 +2,16 @@ package com.pritam.githubexplorer.ui.fragment
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.*
 import android.widget.LinearLayout
-import androidx.browser.customtabs.CustomTabsIntent
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.pritam.githubexplorer.R
-import com.pritam.githubexplorer.databinding.FragmentFollowBinding
+import com.pritam.githubexplorer.databinding.FragmentRecyclerBinding
 import com.pritam.githubexplorer.retrofit.model.Status
 import com.pritam.githubexplorer.retrofit.model.UserReposResponse
 import com.pritam.githubexplorer.retrofit.rest.ApiClient
@@ -24,19 +21,19 @@ import com.pritam.githubexplorer.ui.adapter.RecyclerTouchListener
 import com.pritam.githubexplorer.ui.adapter.UserRepoListAdapter
 import com.pritam.githubexplorer.ui.base.ViewModelFactory
 import com.pritam.githubexplorer.ui.viewmodel.UserReposViewModel
-import com.pritam.githubexplorer.utils.ConnectivityUtils
-import com.pritam.githubexplorer.utils.LogUtils
-import java.util.*
+import com.pritam.githubexplorer.utils.*
 
+class UserReposFragment : Fragment() {
 
-open class UserReposFragment : Fragment() {
-
-    private lateinit var mBinding: FragmentFollowBinding
+    private lateinit var mBinding: FragmentRecyclerBinding
     private lateinit var viewModel: UserReposViewModel
     private var username = ""
     private var pageno = 1
     private lateinit var adapter: UserRepoListAdapter
 
+    companion object {
+        val TAG: String = UserReposFragment::class.java.simpleName
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,16 +41,19 @@ open class UserReposFragment : Fragment() {
         arguments?.let {
             username = it.getString("username", "")
         }
-        setupViewModel()
+        viewModel = ViewModelProvider(
+            this,
+            ViewModelFactory(ApiHelper(ApiClient.apiService))
+        ).get(UserReposViewModel::class.java)
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Define the listener for binding
         mBinding =
-            DataBindingUtil.inflate(inflater, R.layout.fragment_follow, container, false)
+            DataBindingUtil.inflate(inflater, R.layout.fragment_recycler, container, false)
 
         setupUI()
         setupObservers()
@@ -61,17 +61,10 @@ open class UserReposFragment : Fragment() {
         return mBinding.root
     }
 
-    private fun setupViewModel() {
-        viewModel = ViewModelProviders.of(
-            this,
-            ViewModelFactory(ApiHelper(ApiClient.apiService))
-        ).get(UserReposViewModel::class.java)
-    }
-
     @SuppressLint("WrongConstant")
     private fun setupUI() {
         val context = activity as Context
-        activity?.title = username.uppercase(Locale.ROOT) + " Repositories"
+        activity?.title = "$username Repositories"
 
         //Connect adapter with recyclerView
         adapter = UserRepoListAdapter(arrayListOf())
@@ -114,8 +107,8 @@ open class UserReposFragment : Fragment() {
     }
 
     private fun setupObservers() {
-        if (activity?.baseContext?.let { ConnectivityUtils.isNetworkAvailable(it) }!!) {
-            viewModel.getUserRepos(username, "updated", 25, pageno).observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+        if (activity?.baseContext?.let { isNetworkAvailable() }!!) {
+            viewModel.getUserRepos(username, "updated", 25, pageno).observe(viewLifecycleOwner, {
                 it?.let {  resource ->
                     when (resource.status) {
                         Status.SUCCESS -> {
@@ -124,12 +117,8 @@ open class UserReposFragment : Fragment() {
                         }
                         Status.ERROR -> {
                             mBinding.swipeRefreshLayout.isRefreshing = false
-                            Snackbar.make(
-                                activity?.window?.decorView?.rootView!!,
-                                R.string.error,
-                                Snackbar.LENGTH_LONG
-                            ).show()
-                            LogUtils.debug("mTAG", it.message.toString())
+                            snackBarError()
+                            LogUtils.debug(TAG, it.message.toString())
                         }
                         Status.LOADING -> {
                             mBinding.swipeRefreshLayout.isRefreshing = true
@@ -169,27 +158,10 @@ open class UserReposFragment : Fragment() {
         // Handle item selection
         return when (item.itemId) {
             R.id.action_share -> {
-                shareData()
+                shareData(username, false)
                 true
             }
             else -> super.onOptionsItemSelected(item)
-        }
-    }
-
-    // Add data to the intent, the receiving app will decide
-    private fun shareData() {
-        val share = Intent(Intent.ACTION_SEND)
-        share.type = "text/plain"
-        share.putExtra(Intent.EXTRA_SUBJECT, "Share $username link!")
-        share.putExtra(Intent.EXTRA_TEXT, getString(R.string.giturl) + username)
-        startActivity(Intent.createChooser(share, "Share $username link!"))
-    }
-
-    private fun openCustomTabs(url: String) {
-        if (url.length > 6 && url.contains("http")) {
-            val builder = CustomTabsIntent.Builder()
-            val customTabsIntent = builder.build()
-            context?.let { customTabsIntent.launchUrl(it, Uri.parse(url)) }
         }
     }
 

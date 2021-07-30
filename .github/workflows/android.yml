@@ -33,11 +33,11 @@ jobs:
 
     # Build Debug APK
     - name: Build APK
-      run: bash ./gradlew assembleDebug --stacktrace
+      run: bash ./gradlew assemble --stacktrace
       
     # Upload APK under artifact
     - name: Upload APK
       uses: actions/upload-artifact@v2
       with:
         name: app
-        path: app/build/outputs/apk/debug/app-debug.apk
+        path: app/build/

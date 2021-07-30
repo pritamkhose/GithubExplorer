@@ -15,4 +15,6 @@ class GitRepository(private val apiHelper: ApiHelper) {
     suspend fun getUserFollower(username: String) = apiHelper.getUserFollower(username)
 
     suspend fun getUserFollowing(username: String) = apiHelper.getUserFollowing(username)
+
+    suspend fun getUserGist(username: String) = apiHelper.getUserGist(username)
 }

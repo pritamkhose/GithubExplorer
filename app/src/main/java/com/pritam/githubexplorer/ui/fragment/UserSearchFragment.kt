@@ -3,57 +3,62 @@ package com.pritam.githubexplorer.ui.fragment
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.pritam.githubexplorer.R
-import com.pritam.githubexplorer.retrofit.model.Item
-import com.pritam.githubexplorer.retrofit.rest.ApiClient
-import com.pritam.githubexplorer.ui.adapter.RecyclerTouchListener
-import com.pritam.githubexplorer.utils.ConnectivityUtils
-import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
-import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
-import com.pritam.githubexplorer.ui.base.ViewModelFactory
 import com.pritam.githubexplorer.databinding.FragmentUserSearchBinding
+import com.pritam.githubexplorer.retrofit.model.Item
 import com.pritam.githubexplorer.retrofit.model.Status
 import com.pritam.githubexplorer.retrofit.model.UserSerachResponse
+import com.pritam.githubexplorer.retrofit.rest.ApiClient
 import com.pritam.githubexplorer.retrofit.rest.ApiHelper
 import com.pritam.githubexplorer.ui.adapter.EndlessRecyclerOnScrollListener
+import com.pritam.githubexplorer.ui.adapter.RecyclerTouchListener
 import com.pritam.githubexplorer.ui.adapter.UserSearchListAdapter
+import com.pritam.githubexplorer.ui.base.ViewModelFactory
 import com.pritam.githubexplorer.ui.viewmodel.UserSearchViewModel
-import com.pritam.githubexplorer.utils.LogUtils
+import com.pritam.githubexplorer.utils.*
 
 class UserSearchFragment : Fragment() {
 
-    private val mTAG = UserSearchFragment::class.java.simpleName
     private lateinit var mBinding: FragmentUserSearchBinding
     private lateinit var viewModel: UserSearchViewModel
     private lateinit var adapter: UserSearchListAdapter
-    private var textSearchStr = ""
+    private var textSearchStr: String = ""
     private var lastTextSearchStr = "*"
-    private var pageno = 1
+    private var pageNo = 1
+
+    companion object {
+
+        val TAG: String = UserSearchFragment::class.java.simpleName
+        const val KEY_USER_NAME = "username"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         arguments?.let {
-            textSearchStr = it.getString("username", "")
+            textSearchStr = it.getString(KEY_USER_NAME, "")
         }
-        setupViewModel()
+        viewModel = ViewModelProvider(
+            this,
+            ViewModelFactory(ApiHelper(ApiClient.apiService))
+        ).get(UserSearchViewModel::class.java)
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Define the listener for binding
         mBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_user_search, container, false)
@@ -62,13 +67,6 @@ class UserSearchFragment : Fragment() {
         setupObservers()
 
         return mBinding.root
-    }
-
-    private fun setupViewModel() {
-        viewModel = ViewModelProviders.of(
-            this,
-            ViewModelFactory(ApiHelper(ApiClient.apiService))
-        ).get(UserSearchViewModel::class.java)
     }
 
     @SuppressLint("WrongConstant")
@@ -129,7 +127,7 @@ class UserSearchFragment : Fragment() {
                 mBinding.recyclerView,
                 object : RecyclerTouchListener.ClickListener {
                     override fun onClick(view: View, position: Int) {
-                        openFragment(adapter.getItem(position).login)
+                        openFragment(UsersDetailsFragment(), adapter.getItem(position).login)
                     }
 
                     override fun onLongClick(view: View?, position: Int) {
@@ -140,8 +138,8 @@ class UserSearchFragment : Fragment() {
 
         mBinding.recyclerView.addOnScrollListener(object : EndlessRecyclerOnScrollListener() {
             override fun onLoadMore() {
-                pageno += 1
-                LogUtils.debug(mTAG, "onLoadMore $pageno")
+                pageNo += 1
+                LogUtils.debug(TAG, "onLoadMore $pageNo")
                 setupObservers()
             }
         })
@@ -153,10 +151,10 @@ class UserSearchFragment : Fragment() {
             R.color.red
         )
         mBinding.swipeRefreshLayout.setOnRefreshListener {
-            pageno = 1
+            pageNo = 1
             setupObservers()
         }
-        pageno = 1
+        pageNo = 1
     }
 
     private fun setupObservers() {
@@ -165,11 +163,11 @@ class UserSearchFragment : Fragment() {
         }
         if (lastTextSearchStr != textSearchStr) {
             lastTextSearchStr = textSearchStr
-            pageno = 1
+            pageNo = 1
         }
-        LogUtils.debug(mTAG, pageno.toString())
-        if (activity?.baseContext?.let { ConnectivityUtils.isNetworkAvailable(it) }!!) {
-            viewModel.getUsers(textSearchStr, pageno).observe(viewLifecycleOwner, Observer {
+        LogUtils.debug(TAG, pageNo.toString())
+        if (activity?.baseContext?.let { isNetworkAvailable() }!!) {
+            viewModel.getUsers(textSearchStr, pageNo).observe(viewLifecycleOwner, {
                 it?.let { resource ->
                     when (resource.status) {
                         Status.SUCCESS -> {
@@ -177,16 +175,12 @@ class UserSearchFragment : Fragment() {
                             resource.data?.let { users -> retrieveList(users) }
                         }
                         Status.ERROR -> {
-                            if (pageno > 1){
-                                pageno-= 1
+                            if (pageNo > 1) {
+                                pageNo -= 1
                             }
                             mBinding.swipeRefreshLayout.isRefreshing = false
-                            Snackbar.make(
-                                activity?.window?.decorView?.rootView!!,
-                                R.string.error,
-                                Snackbar.LENGTH_LONG
-                            ).show()
-                            LogUtils.debug(mTAG, it.message.toString())
+                            snackBarError()
+                            LogUtils.debug(TAG, it.message.toString())
                         }
                         Status.LOADING -> {
                             mBinding.swipeRefreshLayout.isRefreshing = true
@@ -211,7 +205,7 @@ class UserSearchFragment : Fragment() {
             if (res.total_count > 0) {
                 val users: List<Item> = res.items
                 adapter.apply {
-                    if (pageno == 1) {
+                    if (pageNo == 1) {
                         clearItem()
                     }
                     addItem(users)
@@ -226,23 +220,8 @@ class UserSearchFragment : Fragment() {
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            Snackbar.make(
-                activity?.window?.decorView?.rootView!!,
-                R.string.error,
-                Snackbar.LENGTH_LONG
-            ).show()
+            snackBarError()
         }
-    }
-
-    private fun openFragment(username: String) {
-        val userDetailFragment = UsersDetailsFragment()
-        val args = Bundle()
-        args.putString("username", username)
-        userDetailFragment.arguments = args
-        val fragmentTransaction = requireFragmentManager().beginTransaction()
-        fragmentTransaction.replace(R.id.fragment_container, userDetailFragment)
-        fragmentTransaction.addToBackStack(null)
-        fragmentTransaction.commit()
     }
 
     private fun hideKeyboard() {

@@ -12,6 +12,7 @@
     <string name="nouser">No more result Found</string>
     <string name="action_share">Share</string>
     <string name="giturl">https://github.com/</string>
+    <string name="gisturl">https://gist.github.com/</string>
     <string name="enterusername">Enter valid text for Search</string>
     <string name="joinedAt">Joined at :\u0020</string>
     <string name="updatedAt">Last updated at :\u0020</string>

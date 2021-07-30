@@ -25,6 +25,9 @@ class ViewModelFactory(private val apiHelper: ApiHelper) : ViewModelProvider.Fac
         if (modelClass.isAssignableFrom(UserReposViewModel::class.java)) {
             return UserReposViewModel(GitRepository(apiHelper)) as T
         }
+        if (modelClass.isAssignableFrom(UserGistViewModel::class.java)) {
+            return UserGistViewModel(GitRepository(apiHelper)) as T
+        }
 
         throw IllegalArgumentException("Unknown class name")
     }
