@@ -42,15 +42,15 @@ jobs:
     - name: Build APK
 #      run: bash ./gradlew assemble --stacktrace
 #      run: bash ./gradlew assembleRelease --stacktrace
-#      run: bash ./gradlew assembleDevDebug --stacktrace
-      run: bash ./gradlew assembleProdRelease --stacktrace
+      run: bash ./gradlew assembleDevDebug --stacktrace
+#      run: bash ./gradlew assembleProdRelease --stacktrace
 
     # Upload APK under artifact
     - name: Upload APK
       uses: actions/upload-artifact@v2
       with:
-        name: app
+#        name: app
 #        path: app/build/
 #        path: app/build/outputs/apk/release/app-release.apk
-#        path: app/build/outputs/apk/dev/debug/app-dev-debug.apk
-        path: app/build/outputs/apk/prod/release/app-prod-release-unsigned.apk
+        path: app/build/outputs/apk/dev/debug/app-dev-debug.apk
+#        path: app/build/outputs/apk/prod/release/app-prod-release-unsigned.apk
