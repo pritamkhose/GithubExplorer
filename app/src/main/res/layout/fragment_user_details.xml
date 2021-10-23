@@ -85,9 +85,11 @@
                                         android:id="@+id/tv_name"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
+                                        android:layout_marginStart="5dp"
                                         android:layout_marginBottom="5dp"
                                         android:text="@{userdetails.name}"
-                                        android:textColor="@android:color/holo_blue_dark"
+                                        tools:text="User name"
+                                        android:textColor="@color/blue"
                                         android:textSize="22sp"
                                         android:textStyle="bold"
                                         android:visibility="@{userdetails.name.length() > 1 ? View.VISIBLE : View.GONE}" />
@@ -99,7 +101,8 @@
                                         android:layout_marginStart="5dp"
                                         android:layout_marginBottom="5dp"
                                         android:text="@{userdetails.bio}"
-                                        android:textColor="@android:color/black"
+                                        tools:text="Bio details"
+                                        android:textColor="?android:attr/textColorSecondary"
                                         android:textSize="18sp"
                                         android:visibility="@{userdetails.bio.length() > 1 ? View.VISIBLE : View.GONE}" />
 
@@ -110,7 +113,8 @@
                                         android:layout_marginStart="5dp"
                                         android:layout_marginBottom="5dp"
                                         android:text="@{userdetails.location}"
-                                        android:textColor="@android:color/black"
+                                        tools:text="location"
+                                        android:textColor="?android:attr/textColorPrimary"
                                         android:textSize="18sp"
                                         android:visibility="@{userdetails.location.length() > 1 ? View.VISIBLE : View.GONE}" />
 
@@ -141,7 +145,8 @@
                                     android:layout_height="wrap_content"
                                     android:onClick="@{() -> listener.onClickEmail()}"
                                     android:text="@{String.valueOf(userdetails.email)}"
-                                    android:textColor="@android:color/holo_blue_light"
+                                    tools:text="email@domain.com"
+                                    android:textColor="@color/blue"
                                     android:textSize="18sp"
                                     android:textStyle="bold" />
 
@@ -172,7 +177,8 @@
                                     android:layout_height="wrap_content"
                                     android:onClick="@{() -> listener.onClickBlog(userdetails.blog)}"
                                     android:text="@{userdetails.blog}"
-                                    android:textColor="@android:color/holo_blue_light"
+                                    tools:text="Link details"
+                                    android:textColor="@color/blue"
                                     android:textSize="18sp" />
                             </LinearLayout>
 
@@ -198,7 +204,8 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:text="@{StringUtil.stringDateFormat(@string/joinedAt ,userdetails.created_at)}"
-                                    android:textColor="@android:color/black"
+                                    tools:text="@string/joinedAt"
+                                    android:textColor="?android:attr/textColorPrimary"
                                     android:textSize="18sp" />
                             </LinearLayout>
 
@@ -224,7 +231,8 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:text="@{StringUtil.stringDateFormat(@string/updatedAt, userdetails.updated_at)}"
-                                    android:textColor="@android:color/black"
+                                    tools:text="@string/updatedAt"
+                                    android:textColor="?android:attr/textColorPrimary"
                                     android:textSize="18sp" />
                             </LinearLayout>
 
@@ -271,7 +279,8 @@
                                         android:gravity="center_horizontal"
                                         android:text="@{String.valueOf(userdetails.followers)}"
                                         android:textAlignment="center"
-                                        android:textColor="@android:color/black"
+                                        tools:text="0"
+                                        android:textColor="?android:attr/textColorPrimary"
                                         android:textSize="20sp" />
 
                                     <RelativeLayout
@@ -301,7 +310,7 @@
                                                 android:gravity="center_horizontal"
                                                 android:text="@string/followers"
                                                 android:textAlignment="center"
-                                                android:textColor="@android:color/black"
+                                                android:textColor="?android:attr/textColorPrimary"
                                                 android:textSize="18sp" />
 
                                         </LinearLayout>
@@ -339,7 +348,8 @@
                                         android:gravity="center_horizontal"
                                         android:text="@{String.valueOf(userdetails.following)}"
                                         android:textAlignment="center"
-                                        android:textColor="@android:color/black"
+                                        tools:text="0"
+                                        android:textColor="?android:attr/textColorPrimary"
                                         android:textSize="20sp" />
 
                                     <RelativeLayout
@@ -369,7 +379,7 @@
                                                 android:gravity="center_horizontal"
                                                 android:text="@string/following"
                                                 android:textAlignment="center"
-                                                android:textColor="@android:color/black"
+                                                android:textColor="?android:attr/textColorPrimary"
                                                 android:textSize="18sp" />
                                         </LinearLayout>
                                     </RelativeLayout>
@@ -410,7 +420,8 @@
                                         android:gravity="center_horizontal"
                                         android:text="@{String.valueOf(userdetails.public_gists)}"
                                         android:textAlignment="center"
-                                        android:textColor="@android:color/black"
+                                        tools:text="0"
+                                        android:textColor="?android:attr/textColorPrimary"
                                         android:textSize="20sp" />
 
                                     <RelativeLayout
@@ -440,7 +451,7 @@
                                                 android:gravity="center_horizontal"
                                                 android:text="@string/public_gists"
                                                 android:textAlignment="center"
-                                                android:textColor="@android:color/black"
+                                                android:textColor="?android:attr/textColorPrimary"
                                                 android:textSize="18sp" />
                                         </LinearLayout>
                                     </RelativeLayout>
@@ -475,7 +486,8 @@
                                         android:gravity="center_horizontal"
                                         android:text="@{String.valueOf(userdetails.public_repos)}"
                                         android:textAlignment="center"
-                                        android:textColor="@android:color/black"
+                                        tools:text="0"
+                                        android:textColor="?android:attr/textColorPrimary"
                                         android:textSize="20sp" />
 
                                     <RelativeLayout
@@ -505,7 +517,7 @@
                                                 android:gravity="center_horizontal"
                                                 android:text="@string/repositories"
                                                 android:textAlignment="center"
-                                                android:textColor="@android:color/black"
+                                                android:textColor="?android:attr/textColorPrimary"
                                                 android:textSize="18sp" />
 
                                         </LinearLayout>

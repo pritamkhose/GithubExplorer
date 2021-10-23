@@ -22,6 +22,7 @@
     <string name="repositories">Repositories</string>
     <string name="image">image</string>
     <string name="search">Search</string>
+    <string name="na">NA</string>
 
 <!--    accessibility string-->
     <string name="accessibility_image">Image of %s</string>

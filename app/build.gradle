@@ -2,23 +2,24 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-kapt'
-    id 'dagger.hilt.android.plugin'
 }
 
 android {
     // Sdk and tools
-    compileSdkVersion 30
+    compileSdk 31
+
     defaultConfig {
         applicationId "com.pritam.githubexplorer"
-        minSdkVersion 23
-        targetSdkVersion 30
+        minSdk 23
+        targetSdk 31
         versionCode 1
-        versionName "1.0"
+        versionName "1.3"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         // Enabling multidex support.
         multiDexEnabled true
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -29,9 +30,12 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
     buildFeatures {
         dataBinding true
-//        viewBinding = true
     }
 
     packagingOptions {
@@ -68,26 +72,12 @@ android {
 
 dependencies {
     //Adding dependencies
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation "androidx.appcompat:appcompat:1.3.0"
-    implementation "androidx.core:core-ktx:1.6.0"
-    implementation "androidx.constraintlayout:constraintlayout:2.0.4"
-    implementation "com.google.android.material:material:1.4.0"
+    implementation 'androidx.core:core-ktx:1.6.0'
+    implementation 'androidx.appcompat:appcompat:1.3.1'
+    implementation 'com.google.android.material:material:1.4.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.1'
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
     implementation group: 'androidx.recyclerview', name: 'recyclerview', version: "1.2.1"
-
-    // navigation components
-    def nav_version = "2.3.5"
-    implementation "androidx.navigation:navigation-runtime-ktx:$nav_version"
-    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
-    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
-
-    // Room components
-    def room_version = "2.3.0"
-    implementation "androidx.room:room-runtime:$room_version"
-    kapt "androidx.room:room-compiler:$room_version"
-    androidTestImplementation "androidx.room:room-testing:$room_version"
 
     // Lifecycle components
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
@@ -96,11 +86,6 @@ dependencies {
 
     // kapt components
     kapt "com.android.databinding:compiler:3.1.4"
-
-    // hilt
-    def hilt_version = "2.37"
-    implementation "com.google.dagger:hilt-android:$hilt_version"
-    kapt "com.google.dagger:hilt-compiler:$hilt_version"
 
     // GSON
     implementation "com.google.code.gson:gson:2.8.6"
@@ -119,18 +104,17 @@ dependencies {
     implementation group: 'androidx.browser', name: 'browser', version: '1.3.0'
 
     // Testing
-    testImplementation 'junit:junit:4.13'
-    testImplementation "androidx.test.ext:junit:1.1.3"
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation "androidx.test:runner:1.4.0"
     androidTestImplementation 'androidx.test:rules:1.4.0'
-    androidTestImplementation "androidx.test.espresso:espresso-core:3.4.0"
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
-    testImplementation group: 'androidx.arch.core', name: 'core-testing', version: '2.1.0'
-    testImplementation "com.squareup.okhttp3:mockwebserver:4.7.2"
-    testImplementation "org.mockito:mockito-core:3.3.3"
-    androidTestImplementation "org.mockito:mockito-core:3.3.3"
-    androidTestImplementation "org.mockito:mockito-android:2.25.0"
-
+//    testImplementation group: 'androidx.arch.core', name: 'core-testing', version: '2.1.0'
+//    testImplementation "com.squareup.okhttp3:mockwebserver:4.7.2"
+//    testImplementation "org.mockito:mockito-core:3.3.3"
+//    androidTestImplementation "org.mockito:mockito-core:3.3.3"
+//    androidTestImplementation "org.mockito:mockito-android:2.25.0"
 }
 
 kapt {

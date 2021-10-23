@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -37,7 +38,8 @@
                     android:accessibilityHeading="true"
                     android:text="@{gist.description}"
                     android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-                    android:textColor="@android:color/holo_blue_dark"
+                    tools:text="title with description"
+                    android:textColor="@color/blue"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:visibility="@{gist.description.length() > 1 ? View.VISIBLE : View.GONE}" />
@@ -45,12 +47,13 @@
                 <TextView
                     android:id="@+id/tv_updated_at"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="5dp"
                     android:layout_weight="1"
                     android:text="@{StringUtil.stringDateFormat(@string/updatedAt, gist.updated_at)}"
-                    android:textColor="@android:color/black"
+                    tools:text="@string/updatedAt"
+                    android:textColor="?android:attr/textColorSecondary"
                     android:textSize="18sp"
                     android:visibility="@{gist.updated_at.length() > 1 ? View.VISIBLE : View.GONE}" />
 
