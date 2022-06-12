@@ -8,8 +8,7 @@ import com.pritam.githubexplorer.ui.viewmodel.*
 
 class ViewModelFactory(private val apiHelper: ApiHelper) : ViewModelProvider.Factory {
 
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(UserSearchViewModel::class.java)) {
             return UserSearchViewModel(GitRepository(apiHelper)) as T
         }
