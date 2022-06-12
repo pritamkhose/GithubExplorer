@@ -16,8 +16,8 @@ tasks.withType(Test) {
 task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'createDebugCoverageReport']) {
 
     reports {
-        xml.enabled = true
-        html.enabled = true
+        xml.enabled(true)
+        html.enabled(true)
     }
 
     def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*']
@@ -56,12 +56,21 @@ android {
         }
         unitTests.returnDefaultValues = true
     }
-
+    signingConfigs {
+        prod {
+            storeFile file('prod.keystore')
+            storePassword 'GithubExplorer'
+            keyAlias 'GithubExplorer'
+            keyPassword 'GithubExplorer'
+        }
+    }
     buildTypes {
         debug{
+            signingConfig signingConfigs.prod
             testCoverageEnabled true
         }
         release {
+            signingConfig signingConfigs.prod
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }

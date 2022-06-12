@@ -47,3 +47,9 @@ downloaded from [here](https://developer.android.com/studio/).
 Upcoming features
 -----------------
 Updates will include many more android architectural pattern and updating existing components features.
+
+Run JaCoCo & Test case
+--------------
+```sh
+./gradlew connectedCheck --stacktrace
+```
