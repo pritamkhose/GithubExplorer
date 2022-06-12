@@ -35,7 +35,7 @@ workflows:
           EOF          
       - name: Build Android app
         script: 
-          cd android && bash ./gradlew assembleRelease --stacktrace  # To generate an .abb use--> ./gradlew bundleRelease
+          bash ./gradlew assembleRelease --stacktrace  # To generate an .abb use--> ./gradlew bundleRelease
     artifacts:
       # - app/build/outputs/**/**/*.aab
       - app/build/outputs/**/**/*.apk
