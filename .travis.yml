@@ -1,6 +1,11 @@
+# https://medium.com/app-dev-community/configuring-travis-ci-for-android-project-api-level-30-c4e37c544b26
+# https://stackoverflow.com/questions/53076422/getting-android-sdkmanager-to-run-with-java-11
+# https://stackoverflow.com/questions/54273412/failed-to-install-the-following-android-sdk-packages-as-some-licences-have-not
+# https://stackoverflow.com/questions/12343452/how-to-publish-artifacts-in-travis-ci
+
 sudo: required
 language: android
-jdk: oraclejdk8
+jdk: oraclejdk17
 dist: trusty
 
 android:
@@ -11,35 +16,43 @@ android:
  
   components:
     - tools
-    - build-tools-30.0.2
-    - android-30
-    - android-22
+    - platform-tools
     - extra-google-google_play_services
     - extra-google-m2repository
     - extra-android-m2repository
-    - sys-img-armeabi-v7a-android-22
+
+env:
+  global:
+    - TARGET_VERSION=30
+    - ANDROID_BUILD_TOOLS_VERSION=30.0.2
+    - ANDROID_HOME=~/android-sdk
  
 before_install:
-  - chmod +x gradlew
-  - yes | sdkmanager "platforms;android-30"
+  # - yes | sdkmanager --licenses
+  # -  yes | ~/Android/Sdk/tools/bin/sdkmanager --licenses
+  - touch $HOME/.android/repositories.cfg
+  - wget "https://dl.google.com/android/repository/commandlinetools-linux-7302050_latest.zip" -O commandlinetools.zip
+  - unzip commandlinetools.zip -d $ANDROID_HOME/
+  - yes | $ANDROID_HOME/cmdline-tools/bin/sdkmanager "platforms;android-${TARGET_VERSION}" --sdk_root=$ANDROID_HOME
+  - yes | $ANDROID_HOME/cmdline-tools/bin/sdkmanager "build-tools;${ANDROID_BUILD_TOOLS_VERSION}" --sdk_root=$ANDROID_HOME
+
 
 before_script:
-  - echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a
-  - emulator -avd test -no-audio -no-window &
-  - android-wait-for-emulator
-  - adb shell input keyevent 82 &
+  - chmod +x gradlew
+#   - echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a
+#   - emulator -avd test -no-audio -no-window &
+#   - android-wait-for-emulator
+#   - adb shell input keyevent 82 &
 
 script:
-  - ./gradlew clean build
-  - ./gradlew test
-  - ./gradlew build check
+  # - ./gradlew test
+  - ./gradlew assembleDevDebug --stacktrace
 
-before_cache:
-  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
-  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
-
-cache:
-  directories:
-  - $HOME/.gradle/caches/
-  - $HOME/.gradle/wrapper/
-  - $HOME/.android/build-cache
+deploy:
+  provider: releases
+  api_key: ${github_api_key}
+  file: "app/build/outputs/apk/dev/debug/app-dev-debug.apk"
+  skip_cleanup: true
+  on:
+    all_branches: true
+    tags: true
